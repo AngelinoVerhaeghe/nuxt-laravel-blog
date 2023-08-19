@@ -17,3 +17,9 @@ module.exports = {
   plugins: [],
 }
 
+// Colors
+// Sky Cyan Blauw: bg-cyan-300 (#6EE7B7)
+// Zachte Hemelblauw: bg-blue-200 (#90CDF4)
+// Ijzig Turquoise: bg-teal-300 (#4FD1C5)
+// Wolkenwit: bg-gray-100 (#F7FAFC)
+// Zeegroen: bg-green-500 (#48BB78)
