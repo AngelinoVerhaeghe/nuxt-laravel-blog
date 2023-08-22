@@ -1,15 +1,19 @@
 <script setup>
+// const posts = await $fetch('http://127.0.0.1:8000/api/posts').catch((error) => error.data)
 
+const { data: posts } = await useAsyncData('latest-posts', () => {
+    return queryContent('/blog')
+        .sort({ data: 1 })
+        .limit(3)
+        .find()
+})
 </script>
 
 <template>
     <section class="space-y-8">
         <h1 class="text-3xl font-bold underline decoration-indigo-600 first-letter:text-4xl first-letter:text-indigo-500">CodeWave</h1>
-        <h2 class="text-2xl text-sky-700 font-semibold">Welkom op ons uitgebreide <span class="underline decoration-cyan-400">blogplatform</span> gewijd aan de boeiende wereld van development.</h2>
-
-        <p> Navigeer door de Code: Ontdekkingen en Inzichten in de Developmentwereld. Of je nu een doorgewinterde programmeur bent of net
-            begint te leren coderen, hier vind je een schat aan informatie, inzichten en inspiratie om je reis in de developmentwereld te
-            verrijken.</p>
+        <h2 class="text-2xl text-sky-700 font-semibold">Welkom op ons uitgebreide <span class="underline decoration-cyan-400">blogplatform</span>
+            gewijd aan de boeiende wereld van development.</h2>
 
         <p>Onze missie is om een gemeenschap van gepassioneerde developers te verbinden en te ondersteunen. We zullen diep duiken in een breed scala
             aan onderwerpen, variërend van programmeertalen zoals Python, Java, en JavaScript tot frameworks zoals React, Angular en Vue. We zullen
@@ -34,4 +38,10 @@
             is een reis die nooit eindigt, en we zijn verheugd om je op deze opwindende reis te vergezellen. Bedankt dat je met ons meedoet op deze
             ontwikkelingsreis!</p>
     </section>
+
+    <h2 class="text-2xl font-semibold mt-20">Latest Blog Posts</h2>
+    <section class="grid md:grid-cols-3 gap-10 mt-8">
+        <Post :posts="posts" />
+    </section>
+
 </template>

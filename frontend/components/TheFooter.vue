@@ -4,8 +4,6 @@ const links = [
     { name: 'Twitter', href: 'https://twitter.com/AngelinoSonic', icon: 'uil:twitter'},
     { name: 'LinkedIn', href: 'https://www.linkedin.com/in/angelino-verhaeghe/', icon: 'uil:linkedin'}
 ]
-
-console.log(links);
 </script>
 
 <template>
