@@ -33,4 +33,9 @@ class Post extends Model implements HasMedia
 	{
 		return $this->belongsToMany(Tag::class);
 	}
+
+	public function getRouteKeyName(): string
+	{
+		return 'slug';
+	}
 }

@@ -26,79 +26,86 @@ use Illuminate\Support\Str;
 
 class PostResource extends Resource
 {
-    protected static ?string $model = Post::class;
+	protected static ?string $model = Post::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+	protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-	            Card::make()->schema([
-		            Select::make('user_id')
-			            ->relationship(name: 'author', titleAttribute: 'name')
-			            ->options(User::all()->pluck('name', 'id'))
-			            ->searchable(),
-		            Select::make('category_id')
-			            ->relationship(name: 'category', titleAttribute: 'name')
-			            ->options(Category::all()->pluck('name', 'id'))
-			            ->searchable(),
-		            TextInput::make('title')
-			            ->live()
-			            ->afterStateUpdated(function ( Get $get, Set $set, ?string $old, ?string $state ) {
-				            if ( ($get('slug') ?? '') !== Str::slug($old) ) {
-					            return;
-				            }
+	protected static ?string $label = 'Blogs';
 
-				            $set('slug', Str::slug($state));
-			            })->required(),
-
-		            TextInput::make('slug')->required(),
+	public static function form( Form $form ): Form
+	{
+		return $form
+			->schema([
+				Card::make()->schema([
+					Select::make('user_id')
+						->relationship(name: 'author', titleAttribute: 'name')
+						->options(User::all()->pluck('name', 'id'))
+						->searchable(),
+					Select::make('category_id')
+						->relationship(name: 'category', titleAttribute: 'name')
+						->options(Category::all()->pluck('name', 'id'))
+						->helperText('Selecteer een categorie')
+						->label(__('Categorie'))
+						->searchable(),
+					TextInput::make('title')
+						->label(__('Titel'))
+						->live()
+						->afterStateUpdated(fn( Set $set, ?string $state ) => $set('slug', Str::slug($state)))
+						->required(),
+					TextInput::make('slug')
+						->required(),
 					SpatieMediaLibraryFileUpload::make('thumbnail')->collection('posts'),
-		            RichEditor::make('description'),
-		            Toggle::make('is_published')->label(__('Published'))
-	            ])
-            ]);
-    }
+					RichEditor::make('description')
+						->label(__('Omschrijving')),
+					Toggle::make('is_published')->label(__('Actief'))
+				])
+			]);
+	}
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-	            TextColumn::make('id')->sortable(),
-	            TextColumn::make('title')->sortable(),
+	public static function table( Table $table ): Table
+	{
+		return $table
+			->columns([
+				TextColumn::make('title')->sortable(),
 				SpatieMediaLibraryImageColumn::make('thumbnail')->collection('posts'),
-	            BooleanColumn::make('is_published')->label(__('Published'))
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
-            ]);
-    }
-    
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-    
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListPosts::route('/'),
-            'create' => Pages\CreatePost::route('/create'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
-        ];
-    }    
+				TextColumn::make('created_at')
+					->date()
+					->sortable(),
+				BooleanColumn::make('is_published')->label(__('Published'))
+			])
+			->filters([
+				//
+			])
+			->actions([
+				Tables\Actions\ActionGroup::make([
+					Tables\Actions\ViewAction::make(),
+					Tables\Actions\EditAction::make(),
+					Tables\Actions\DeleteAction::make()
+				])
+			])
+			->bulkActions([
+				Tables\Actions\BulkActionGroup::make([
+					Tables\Actions\DeleteBulkAction::make(),
+				]),
+			])
+			->emptyStateActions([
+				Tables\Actions\CreateAction::make(),
+			]);
+	}
+
+	public static function getRelations(): array
+	{
+		return [
+			//
+		];
+	}
+
+	public static function getPages(): array
+	{
+		return [
+			'index' => Pages\ListPosts::route('/'),
+			'create' => Pages\CreatePost::route('/create'),
+			'edit' => Pages\EditPost::route('/{record}/edit'),
+		];
+	}
 }

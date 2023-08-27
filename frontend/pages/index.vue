@@ -1,47 +1,23 @@
 <script setup>
-// const posts = await $fetch('http://127.0.0.1:8000/api/posts').catch((error) => error.data)
-
-const { data: posts } = await useAsyncData('latest-posts', () => {
-    return queryContent('/blog')
-        .sort({ data: 1 })
-        .limit(3)
-        .find()
+const { data: posts, pending } = await useFetch(() => `${ import.meta.env.VITE_API_BASE_URL }/posts`, {
+    transform: (_posts) => _posts.data,
+    server: false,
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    }
 })
 </script>
 
 <template>
-    <section class="space-y-8">
-        <h1 class="text-3xl font-bold underline decoration-indigo-600 first-letter:text-4xl first-letter:text-indigo-500">CodeWave</h1>
-        <h2 class="text-2xl text-sky-700 font-semibold">Welkom op ons uitgebreide <span class="underline decoration-cyan-400">blogplatform</span>
-            gewijd aan de boeiende wereld van development.</h2>
+    <section>
+        <h2 class="text-2xl font-semibold">Latest Blog Posts</h2>
 
-        <p>Onze missie is om een gemeenschap van gepassioneerde developers te verbinden en te ondersteunen. We zullen diep duiken in een breed scala
-            aan onderwerpen, variërend van programmeertalen zoals Python, Java, en JavaScript tot frameworks zoals React, Angular en Vue. We zullen
-            ook best practices bespreken voor versiebeheer, debuggingstechnieken en effectieve samenwerking in developmentteams.</p>
-
-        <p>De technologische wereld evolueert in een razend tempo en daarom zullen we je op de hoogte houden van de nieuwste trends en ontwikkelingen.
-            Van kunstmatige intelligentie en machine learning tot blockchain en de opkomst van serverless architecturen, we zullen de technologieën
-            verkennen die de toekomst vormgeven.</p>
-
-        <p>Maar development gaat niet alleen over code schrijven. Het gaat ook over het begrijpen van de behoeften van gebruikers, het ontwerpen van
-            intuïtieve gebruikersinterfaces en het leveren van waardevolle oplossingen. Daarom zullen we aandacht besteden aan het ontwerpen van
-            gebruiksvriendelijke applicaties, UX/UI-principes en agile developmentmethodologieën.</p>
-
-        <p>Ons team van ervaren developers en technologieliefhebbers zal diepgravende tutorials, stapsgewijze handleidingen en deskundige analyses
-            leveren. We moedigen ook bijdragen vanuit de community aan, zodat we verschillende perspectieven kunnen belichten en een rijke dialoog
-            kunnen bevorderen.</p>
-
-        <p>Of je nu op zoek bent naar antwoorden op specifieke technische problemen, wilt leren over de nieuwste tools en frameworks, of geïnspireerd
-            wilt worden door de successen en uitdagingen van andere developers, wij zijn er om je te ondersteunen.</p>
-
-        <p>Dus neem de tijd om door onze artikelen te bladeren, te leren van onze experts en deel uit te maken van de groeiende community. Development
-            is een reis die nooit eindigt, en we zijn verheugd om je op deze opwindende reis te vergezellen. Bedankt dat je met ons meedoet op deze
-            ontwikkelingsreis!</p>
+        <div v-if="pending">
+            Loading ...
+        </div>
+        <section class="grid sm:grid-cols-2 gap-10 mt-8">
+            <PostCardApi v-for="post in posts" :key="post.id" :post="post"/>
+        </section>
     </section>
-
-    <h2 class="text-2xl font-semibold mt-20">Latest Blog Posts</h2>
-    <section class="grid md:grid-cols-3 gap-10 mt-8">
-        <Post :posts="posts" />
-    </section>
-
 </template>

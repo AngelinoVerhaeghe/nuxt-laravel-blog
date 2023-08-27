@@ -7,7 +7,6 @@ category: Fantasy
 author: Sonic
 ---
 
-
 # Palia
 
 A COZY WORLD MADE FOR YOU
