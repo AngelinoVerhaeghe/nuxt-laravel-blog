@@ -3,7 +3,7 @@ const props = defineProps([ 'posts' ]);
 </script>
 
 <template>
-    <div v-for="post in posts" :key="post.id"
+    <div v-for="post in props.posts" :key="post.id"
          class="bg-white rounded-md shadow-md overflow-hidden">
         <div class="relative">
             <nuxt-link :to="post._path">

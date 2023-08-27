@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\v1\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +19,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/posts', [PostController::class, 'index']);
+Route::prefix('v1')->group(function () {
+	Route::get('/posts', [PostController::class, 'index']);
+	Route::get('/posts/{post:slug}', [PostController::class, 'show']);
+});

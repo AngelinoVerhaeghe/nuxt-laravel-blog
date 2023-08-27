@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
@@ -31,9 +31,15 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
-        //
+	    $post = Post::where('slug', $slug)->first();
+
+	    if (!$post) {
+		    return response()->json(['message' => 'Post not found'], 404);
+	    }
+
+	    return new PostResource($post);
     }
 
     /**

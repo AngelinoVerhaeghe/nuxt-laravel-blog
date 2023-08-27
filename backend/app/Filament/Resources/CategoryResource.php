@@ -20,7 +20,13 @@ class CategoryResource extends Resource
 {
 	protected static ?string $model = Category::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+	protected static ?string $navigationIcon = 'heroicon-o-swatch';
+
+	// Create a dropdown group in the sidebar
+	protected static ?string $navigationGroup = 'Extra';
+
+	// Place this dropdown item in an order u want
+	protected static ?int $navigationSort = 1;
 
 	public static function form( Form $form ): Form
 	{
@@ -29,6 +35,7 @@ class CategoryResource extends Resource
 				Card::make()->schema([
 					TextInput::make('name')
 						->live()
+						->label(__('Categorienaam'))
 						->afterStateUpdated(function ( Get $get, Set $set, ?string $old, ?string $state ) {
 							if ( ($get('slug') ?? '') !== Str::slug($old) ) {
 								return;
@@ -46,15 +53,20 @@ class CategoryResource extends Resource
 	{
 		return $table
 			->columns([
-				TextColumn::make('id')->sortable(),
-				TextColumn::make('name')->sortable(),
-				TextColumn::make('slug')
+				TextColumn::make('name')
+					->sortable()
+					->searchable()
+					->label(__('Categorienaam')),
 			])
 			->filters([
 				//
 			])
 			->actions([
-				Tables\Actions\EditAction::make(),
+				Tables\Actions\ActionGroup::make([
+					Tables\Actions\ViewAction::make(),
+					Tables\Actions\EditAction::make(),
+					Tables\Actions\DeleteAction::make()
+				])
 			])
 			->bulkActions([
 				Tables\Actions\BulkActionGroup::make([

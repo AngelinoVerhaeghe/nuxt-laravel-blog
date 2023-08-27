@@ -21,67 +21,74 @@ use Illuminate\Support\Str;
 
 class TagResource extends Resource
 {
-    protected static ?string $model = Tag::class;
+	protected static ?string $model = Tag::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+	protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-	            Card::make()->schema([
-		            TextInput::make('name')
-			            ->live()
-			            ->afterStateUpdated(function ( Get $get, Set $set, ?string $old, ?string $state ) {
-				            if ( ($get('slug') ?? '') !== Str::slug($old) ) {
-					            return;
-				            }
+	public static function form( Form $form ): Form
+	{
+		return $form
+			->schema([
+				Card::make()->schema([
+					TextInput::make('name')
+						->label(__('Naam'))
+						->live()
+						->afterStateUpdated(function ( Get $get, Set $set, ?string $old, ?string $state ) {
+							if ( ($get('slug') ?? '') !== Str::slug($old) ) {
+								return;
+							}
 
-				            $set('slug', Str::slug($state));
-			            })->required(),
+							$set('slug', Str::slug($state));
+						})->required(),
 
-		            TextInput::make('slug')->required()
-	            ])
-            ]);
-    }
+					TextInput::make('slug')
+						->required()
+						->disabled()
+				])
+			]);
+	}
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-	            TextColumn::make('id')->sortable(),
-	            TextColumn::make('name')->sortable(),
-	            TextColumn::make('slug')
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
-            ]);
-    }
-    
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-    
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListTags::route('/'),
-            'create' => Pages\CreateTag::route('/create'),
-            'edit' => Pages\EditTag::route('/{record}/edit'),
-        ];
-    }    
+	public static function table( Table $table ): Table
+	{
+		return $table
+			->columns([
+				TextColumn::make('name')
+					->sortable()
+					->label(__('naam')),
+			])
+			->filters([
+				//
+			])
+			->actions([
+				Tables\Actions\ActionGroup::make([
+					Tables\Actions\ViewAction::make(),
+					Tables\Actions\EditAction::make(),
+					Tables\Actions\DeleteAction::make()
+				])
+			])
+			->bulkActions([
+				Tables\Actions\BulkActionGroup::make([
+					Tables\Actions\DeleteBulkAction::make(),
+				]),
+			])
+			->emptyStateActions([
+				Tables\Actions\CreateAction::make(),
+			]);
+	}
+
+	public static function getRelations(): array
+	{
+		return [
+			//
+		];
+	}
+
+	public static function getPages(): array
+	{
+		return [
+			'index' => Pages\ListTags::route('/'),
+			'create' => Pages\CreateTag::route('/create'),
+			'edit' => Pages\EditTag::route('/{record}/edit'),
+		];
+	}
 }

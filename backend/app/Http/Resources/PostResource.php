@@ -23,10 +23,11 @@ class PostResource extends JsonResource implements HasMedia
 		return [
 			'id' => $this->id,
 			'title' => $this->title,
-			'description' => $this->description,
+			'slug' => $this->slug,
+			'description' => strip_tags($this->description),
 			'imageUrl' => $mediaUrl,
 			'isPublished' => $this->is_published,
-			'createAt' => $this->created_at,
+			'createAt' => $this->created_at->toFormattedDateString(),
 			'author' => [
 				'name' => $this->author->name,
 			],
@@ -36,28 +37,3 @@ class PostResource extends JsonResource implements HasMedia
 		];
 	}
 }
-
-//"media": [
-//{
-//	"id": 1,
-//"model_type": "App\\Models\\Post",
-//"model_id": 1,
-//"uuid": "abb0c2ea-0b48-472c-b898-08564a971714",
-//"collection_name": "posts",
-//"name": "image_png (2) (1)",
-//"file_name": "FqczagN7UCGGjLk3BCH1GLtep5DK96-metaaW1hZ2VfcG5nICgyKSAoMSkucG5n-.png",
-//"mime_type": "image/png",
-//"disk": "public",
-//"conversions_disk": "public",
-//"size": 498802,
-//"manipulations": [],
-//"custom_properties": [],
-//"generated_conversions": [],
-//"responsive_images": [],
-//"order_column": 1,
-//"created_at": "2023-08-19T18:14:33.000000Z",
-//"updated_at": "2023-08-19T18:14:33.000000Z",
-//"original_url": "http://localhost:8000/storage/1/FqczagN7UCGGjLk3BCH1GLtep5DK96-metaaW1hZ2VfcG5nICgyKSAoMSkucG5n-.png",
-//"preview_url": ""
-//}
-//]

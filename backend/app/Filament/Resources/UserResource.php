@@ -19,15 +19,24 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+	protected static ?string $label = 'Gebruikers';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-	            TextInput::make('name')->maxLength(255)->helperText('Your full name here.')->required(),
+	            TextInput::make('name')
+		            ->maxLength(255)
+		            ->helperText('Volledige naam invullen')
+		            ->label(__('Naam'))
+		            ->required(),
 	            TextInput::make('email')->email()->required(),
-	            TextInput::make('password')->password()->required(),
+	            TextInput::make('password')
+		            ->label(__('Wachtwoord'))
+		            ->password()
+		            ->required(),
             ]);
     }
 
@@ -35,15 +44,22 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-	            TextColumn::make('id')->sortable(),
-	            TextColumn::make('name')->sortable(),
+	            TextColumn::make('name')
+		            ->label(__('Naam'))
+		            ->sortable()
+		            ->searchable(),
 	            TextColumn::make('email')
+	            ->label(__('Emailadres'))
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+	            Tables\Actions\ActionGroup::make([
+		            Tables\Actions\ViewAction::make(),
+		            Tables\Actions\EditAction::make(),
+		            Tables\Actions\DeleteAction::make()
+	            ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
