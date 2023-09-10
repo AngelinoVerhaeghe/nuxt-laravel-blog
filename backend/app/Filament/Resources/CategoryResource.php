@@ -35,7 +35,6 @@ class CategoryResource extends Resource
 				Card::make()->schema([
 					TextInput::make('name')
 						->live()
-						->label(__('Categorienaam'))
 						->afterStateUpdated(function ( Get $get, Set $set, ?string $old, ?string $state ) {
 							if ( ($get('slug') ?? '') !== Str::slug($old) ) {
 								return;
@@ -55,8 +54,8 @@ class CategoryResource extends Resource
 			->columns([
 				TextColumn::make('name')
 					->sortable()
-					->searchable()
-					->label(__('Categorienaam')),
+					->searchable(),
+				TextColumn::make('articles_count')->counts('articles')
 			])
 			->filters([
 				//
