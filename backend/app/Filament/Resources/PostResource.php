@@ -7,14 +7,14 @@ use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -30,36 +30,46 @@ class PostResource extends Resource
 
 	protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
 
-	protected static ?string $label = 'Blogs';
+	//protected static ?string $label = 'Blogs';
 
 	public static function form( Form $form ): Form
 	{
 		return $form
 			->schema([
-				Card::make()->schema([
-					Select::make('user_id')
-						->relationship(name: 'author', titleAttribute: 'name')
-						->options(User::all()->pluck('name', 'id'))
-						->searchable(),
-					Select::make('category_id')
-						->relationship(name: 'category', titleAttribute: 'name')
-						->options(Category::all()->pluck('name', 'id'))
-						->helperText('Selecteer een categorie')
-						->label(__('Categorie'))
-						->searchable(),
-					TextInput::make('title')
-						->label(__('Titel'))
-						->live()
-						->afterStateUpdated(fn( Set $set, ?string $state ) => $set('slug', Str::slug($state)))
-						->required(),
-					TextInput::make('slug')
-						->required(),
-					SpatieMediaLibraryFileUpload::make('thumbnail')->collection('posts'),
-					RichEditor::make('description')
-						->label(__('Omschrijving')),
-					Toggle::make('is_published')->label(__('Actief'))
-				])
+				Group::make()
+					->schema([
+						Section::make('Informatie')
+							->schema([
+								TextInput::make('title')
+									->live(onBlur: true)
+									->afterStateUpdated(fn( Set $set, ?string $state ) => $set('slug', Str::slug($state)))
+									->required(),
+								TextInput::make('slug')
+									->required(),
+								MarkdownEditor::make('description')
+							])
+					]),
+				Group::make()
+					->schema([
+						Section::make()
+							->schema([
+								Select::make('user_id')
+									->relationship(name: 'author', titleAttribute: 'name')
+									->options(User::all()->pluck('name', 'id'))
+									->searchable(),
+								Select::make('category_id')
+									->relationship(name: 'category', titleAttribute: 'name')
+									->options(Category::all()->pluck('name', 'id'))
+									->searchable()
+							]),
+						Section::make()
+							->schema([
+								SpatieMediaLibraryFileUpload::make('thumbnail')->collection('posts'),
+								Toggle::make('is_published')->label(__('Active'))
+							])
+					]),
 			]);
+
 	}
 
 	public static function table( Table $table ): Table

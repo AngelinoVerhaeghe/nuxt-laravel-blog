@@ -159,6 +159,8 @@
       <path value="$PROJECT_DIR$/backend/vendor/spatie/image-optimizer" />
       <path value="$PROJECT_DIR$/backend/vendor/spatie/laravel-medialibrary" />
       <path value="$PROJECT_DIR$/backend/vendor/intervention/image" />
+      <path value="$PROJECT_DIR$/backend/vendor/althinect/filament-spatie-roles-permissions" />
+      <path value="$PROJECT_DIR$/backend/vendor/spatie/laravel-permission" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

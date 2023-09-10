@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-			$table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-			$table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-	        $table->string('title');
-	        $table->string('slug')->unique();
-			$table->text('description');
-			$table->boolean('is_published')->default(false);
+			$table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+			$table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+			$table->unsignedBigInteger('quantity');
+			$table->decimal('unit_price', 10, 2);
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('order_items');
     }
 };

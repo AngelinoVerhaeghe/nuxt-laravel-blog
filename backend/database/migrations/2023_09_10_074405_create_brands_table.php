@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('brands', function (Blueprint $table) {
             $table->id();
-			$table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-			$table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-	        $table->string('title');
+	        $table->string('name');
 	        $table->string('slug')->unique();
-			$table->text('description');
-			$table->boolean('is_published')->default(false);
+	        $table->longText('description')->nullable();
+	        $table->string('url')->nullable();
+			$table->string('primary_hex')->nullable();
+	        $table->boolean('is_visible')->default(false);
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('brands');
     }
 };

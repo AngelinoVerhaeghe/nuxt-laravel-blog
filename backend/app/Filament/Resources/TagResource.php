@@ -5,8 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TagResource\Pages;
 use App\Filament\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
-use Filament\Forms;
-use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -15,8 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class TagResource extends Resource
@@ -29,9 +26,8 @@ class TagResource extends Resource
 	{
 		return $form
 			->schema([
-				Card::make()->schema([
+				Section::make()->schema([
 					TextInput::make('name')
-						->label(__('Naam'))
 						->live()
 						->afterStateUpdated(function ( Get $get, Set $set, ?string $old, ?string $state ) {
 							if ( ($get('slug') ?? '') !== Str::slug($old) ) {
@@ -43,7 +39,7 @@ class TagResource extends Resource
 
 					TextInput::make('slug')
 						->required()
-						->disabled()
+						->disabled(),
 				])
 			]);
 	}
@@ -54,7 +50,8 @@ class TagResource extends Resource
 			->columns([
 				TextColumn::make('name')
 					->sortable()
-					->label(__('naam')),
+					->searchable(),
+				TextColumn::make('articles_count')->counts('articles')
 			])
 			->filters([
 				//
