@@ -27,6 +27,7 @@ class ProductResource extends JsonResource
 	        'isVisible' => $this->is_visible,
 	        'isFeatured' => $this->is_featured,
 	        'publishedAt' => $this->published_at,
+	        'type' => $this->type,
 	        'brand' => [
 				'name' => $this->brand->name
 	        ]
