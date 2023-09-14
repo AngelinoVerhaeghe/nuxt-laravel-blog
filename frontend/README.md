@@ -60,4 +60,10 @@ pnpm run preview
 yarn preview
 ```
 
+## Homepage
+
+Work in progress
+
+![home_page.png](home_page.png)
+
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
