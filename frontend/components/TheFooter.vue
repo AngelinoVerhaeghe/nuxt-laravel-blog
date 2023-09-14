@@ -7,14 +7,20 @@ const links = [
 </script>
 
 <template>
-    <footer class="bg-sky-900">
-        <section class="mx-auto max-w-7xl text-white flex flex-row items-center justify-between p-2 sm:p-6 lg:p-8">
-            <p>&copy; CodeWave 2023. All Rights Reserved.</p>
-            <div class="flex flex-row justify-center space-x-4">
-                <a v-for="link in links" :key="link.name" :href="link.href" target="_blank" rel="nofollow">
-                    <Icon :name="link.icon" size="1.5rem" class="text-white" />
-                </a>
-            </div>
-        </section>
+    <footer class="font-semibold text-white md:p-8 lg:p-10">
+        <div class="mx-auto max-w-screen-xl text-center">
+            <a href="/" class="flex justify-center items-center text-2xl font-semibold">
+                Codewave
+            </a>
+            <p class="text-lime-400 my-6">Exploring life's stories and wisdom.</p>
+            <ul class="flex flex-wrap justify-center items-center space-x-4 mb-6">
+                <li v-for="link in links" :key="link.name">
+                    <a :href="link.href" target="_blank" rel="nofollow">
+                        <Icon :name="link.icon" size="1.5rem" />
+                    </a>
+                </li>
+            </ul>
+            <span class="text-sm sm:text-center">© 2023 <a href="#" class="hover:underline">Codewave</a>. All Rights Reserved.</span>
+        </div>
     </footer>
 </template>
