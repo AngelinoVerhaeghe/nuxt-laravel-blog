@@ -1,81 +1,36 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
 use App\Enums\ProductTypeEnum;
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
-class ProductResource extends Resource
+class ProductsRelationManager extends RelationManager
 {
-	protected static ?string $model = Product::class;
+	protected static string $relationship = 'products';
 
-	protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
-
-	protected static ?int $navigationSort = 0;
-
-	protected static ?string $navigationGroup = 'Shop';
-
-	// Setup Global Search trough whole application, filter on 'name' column property
-	protected static ?string $recordTitleAttribute = 'name';
-
-	// Set limit on the search results
-	protected static int $globalSearchResultsLimit = 20;
-
-	// Navigation Customization
-	//protected static ?string $activeNavigationIcon = 'heroicon-o-check-badge';
-
-	// Badges on navigation
-	public static function getNavigationBadge(): ?string
-	{
-		return static::getModel()::count();
-	}
-
-	// Override to add more searchable columns
-	public static function getGloballySearchableAttributes(): array
-	{
-		return [ 'name', 'slug', 'description' ];
-	}
-
-	// Add additional information to the global search, bv
-	// U search a product, and it shows the 'Brand' to in the result
-	public static function getGlobalSearchResultDetails( Model $record ): array
-	{
-		return [
-			'Brand' => $record->brand->name,
-		];
-	}
-
-	public static function getGlobalSearchEloquentQuery(): Builder
-	{
-		return parent::getGlobalSearchEloquentQuery()->with([ 'brand' ]);
-	}
-
-	public static function form( Form $form ): Form
+	public function form( Form $form ): Form
 	{
 		return $form
 			->schema([
-				Group::make()
-					->schema([
-						Section::make()
+				Forms\Components\Tabs::make('Products')
+					->tabs([
+						Forms\Components\Tabs\Tab::make('Information')
 							->schema([
 								TextInput::make('name')
 									->required()
@@ -95,7 +50,7 @@ class ProductResource extends Resource
 									->unique(Product::class, 'slug', ignoreRecord: true),
 								MarkdownEditor::make("description")->columnSpan('full')
 							])->columns(2),
-						Section::make('Pricing & Inventory')
+						Forms\Components\Tabs\Tab::make('Pricing & Inventory')
 							->schema([
 								TextInput::make('sku')
 									->label('SKU (Stock Keeping Unit)')
@@ -117,11 +72,8 @@ class ProductResource extends Resource
 										'Games' => ProductTypeEnum::GAMES->value,
 										'Accessories' => ProductTypeEnum::ACCESSORIES->value,
 									])
-							])->columns(2)
-					]),
-				Group::make()
-					->schema([
-						Section::make('Status')
+							])->columns(2),
+						Forms\Components\Tabs\Tab::make('Additional Information')
 							->schema([
 								Toggle::make('is_visible')
 									->label('Visibility')
@@ -132,33 +84,26 @@ class ProductResource extends Resource
 									->helperText('Enable or disable products featured status'),
 								DatePicker::make('published_at')
 									->label('Availability')
-									->default(now())
-							]),
-						Section::make('Image')
-							->schema([
+									->default(now()),
+								Select::make('categories')
+									->relationship('categories', 'name')
+									->multiple()
+									->required(),
 								FileUpload::make('image')
 									->directory('pops')
 									->preserveFilenames()
 									->image()
 									->imageEditor()
-							]),
-						Section::make('Associations')
-							->schema([
-								Select::make('brand_id')
-									->relationship('brand', 'name')
-									->required(),
-								Select::make('categories')
-									->relationship('categories', 'name')
-									->multiple()
-									->required()
-							])
-					]),
+									->columnSpanFull()
+							])->columns(2)
+					])->columnSpanFull()
 			]);
 	}
 
-	public static function table( Table $table ): Table
+	public function table( Table $table ): Table
 	{
 		return $table
+			->recordTitleAttribute('name')
 			->columns([
 				Tables\Columns\ImageColumn::make('image'),
 				Tables\Columns\TextColumn::make('name')
@@ -187,46 +132,24 @@ class ProductResource extends Resource
 					->toggleable()
 			])
 			->filters([
-				Tables\Filters\TernaryFilter::make('is_visible')
-					->label('Visibility')
-					->boolean()
-					->trueLabel('Only Visible Products')
-					->falseLabel('Only Hidden Products')
-					->native(false),
-				Tables\Filters\SelectFilter::make('brand')
-					->relationship('brand', 'name')
+				//
+			])
+			->headerActions([
+				Tables\Actions\CreateAction::make(),
 			])
 			->actions([
 				Tables\Actions\ActionGroup::make([
-					Tables\Actions\ViewAction::make(),
 					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make()
+					Tables\Actions\DeleteAction::make(),
 				])
 			])
 			->bulkActions([
 				Tables\Actions\BulkActionGroup::make([
-					ExportBulkAction::make(),
 					Tables\Actions\DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
 				Tables\Actions\CreateAction::make(),
 			]);
-	}
-
-	public static function getRelations(): array
-	{
-		return [
-			//
-		];
-	}
-
-	public static function getPages(): array
-	{
-		return [
-			'index' => Pages\ListProducts::route('/'),
-			'create' => Pages\CreateProduct::route('/create'),
-			'edit' => Pages\EditProduct::route('/{record}/edit'),
-		];
 	}
 }
