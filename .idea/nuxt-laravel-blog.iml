@@ -159,6 +159,15 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/html-sanitizer" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/althinect/filament-spatie-roles-permissions" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/spatie/laravel-permission" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/anourvalar/eloquent-serialize" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/ezyang/htmlpurifier" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/maatwebsite/excel" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/markbaker/complex" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/markbaker/matrix" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpoffice/phpspreadsheet" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/pxlrbt/filament-excel" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/pxlrbt/filament-spotlight" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/wire-elements/spotlight" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
