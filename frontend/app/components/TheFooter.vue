@@ -8,7 +8,7 @@ const links = [
 
 <template>
     <footer class="font-semibold text-white md:p-8 lg:p-10">
-        <div class="mx-auto max-w-screen-xl text-center">
+        <div class="mx-auto max-w-(--breakpoint-xl) text-center">
             <a href="/" class="flex justify-center items-center text-2xl font-semibold">
                 Codewave
             </a>

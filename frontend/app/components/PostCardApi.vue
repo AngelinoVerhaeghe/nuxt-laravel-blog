@@ -21,7 +21,7 @@ defineProps({
             <h5 class="font-semibold text-xl underline decoration-amber-400">{{ post.title }}</h5>
             <p class="text-xs md:text-base py-4">{{ post.description.substring(0,100) + '...' }}</p>
             <small class="flex justify-end">{{ post.author.name }}</small>
-            <nuxt-link :to="`/blog/${post.slug}`" class="inline-block rounded bg-amber-500 px-4 pb-1 pt-1.5 text-xs font-medium uppercase leading-normal shadow-sm text-amber-100 hover:bg-amber-700 duration-200">
+            <nuxt-link :to="`/blog/${post.slug}`" class="inline-block rounded-sm bg-amber-500 px-4 pb-1 pt-1.5 text-xs font-medium uppercase leading-normal shadow-xs text-amber-100 hover:bg-amber-700 duration-200">
                 Read More
             </nuxt-link>
         </div>
