@@ -6,25 +6,27 @@ Local toolchain: PHP 8.3 / 8.4 / 8.5 side by side (ondrej PPA), Composer 2.9, No
 
 **PHP target: 8.5.** Done in step 2: `composer.json` requires `^8.5` and CI runs on 8.5. Make 8.5 your default CLI with `sudo update-alternatives --set php /usr/bin/php8.5` (the default `php` is 8.4 right now).
 
-## Backend (Laravel): installed vs. latest
+## Backend (Laravel): before vs. now
 
-| Package | Locked | Latest | Gap |
-|---|---|---|---|
-| laravel/framework | 10.28 | **13.38** (needs PHP 8.3) | 3 majors |
-| filament/filament (+ media-library plugin) | 3.0.73 / 3.0.0 → **5.10** ✅ | **5.10** | done |
-| livewire/livewire (comes with Filament) | 3.0.7 → **4.4** ✅ | 4.4 | done |
-| laravel/sanctum | 3.3 | 4.3 | major |
-| laravel/breeze | 1.25 | 2.4 | major (replaced by starter kits) |
-| laravel/tinker | 2.8 | 3.0 | major |
-| spatie/laravel-permission | 5.11 | 8.3 | 3 majors |
-| spatie/laravel-medialibrary | 10.13 | 11.23 | major |
-| althinect/filament-spatie-roles-permissions | 2.0 | 4.0 (Filament 4/5) | major |
-| pxlrbt/filament-excel | 2.1 | 3.6 / 4.1 (Filament 4/5) | major |
-| pxlrbt/filament-spotlight | 1.0 | 2.1 | major |
-| nunomaduro/collision | 7.9 | 8.9 | major |
-| phpunit/phpunit | 10.4 | 13.4 (needs PHP 8.4+, fine with the 8.5 target) | major |
-| spatie/laravel-ignition | 2.3 | 2.12 | minor |
-| pint / sail / mockery / faker / guzzle | old minors | current | minor |
+All backend packages are on their latest major. ✅
+
+| Package | Before (audit) | Now |
+|---|---|---|
+| laravel/framework | 10.28 | **13.38** |
+| filament/filament (+ media-library plugin) | 3.0.73 / 3.0.0 | **5.10** |
+| livewire/livewire (comes with Filament) | 3.0.7 | **4.4** |
+| laravel/sanctum | 3.3 | **4.3** |
+| laravel/breeze | 1.25 | removed |
+| laravel/tinker | 2.8 | **3.0** |
+| spatie/laravel-permission | 5.11 | **8.3** |
+| spatie/laravel-medialibrary | 10.13 | **11.23** |
+| althinect/filament-spatie-roles-permissions | 2.0 | **4.0** |
+| pxlrbt/filament-excel | 2.1 | **4.1** |
+| pxlrbt/filament-spotlight | 1.0 | **2.1** |
+| nunomaduro/collision | 7.9 | **8.9** |
+| phpunit/phpunit | 10.4 | **13.4** |
+| spatie/laravel-ignition | 2.3 | **2.12** |
+| pint / sail / guzzle | 1.13 / 1.25 / 7.8 | 1.32 / 1.69 / 7.16 |
 
 ## Frontend (Nuxt): installed vs. latest
 
@@ -71,7 +73,11 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - Kept the Laravel 10 app structure (still supported).
 - [ ] Optional: switch to the slim app structure. This means removing `app/Http/Kernel.php`, `app/Console/Kernel.php`, `Exceptions/Handler.php`, the 9 default middleware classes and most of the providers, and moving their config into `bootstrap/app.php`.
 - [x] Switch to PHP 8.5: done in step 2 (branch `feature/NLB-0/filament-4`).
-- [ ] **L12 → 13.** Bump to `phpunit ^13` (possible now that we're on PHP 8.5).
+- [x] **L12 → 13** (branch `feature/NLB/laravel-13`). Now on Laravel 13.38, Tinker 3, PHPUnit 13 (Symfony 8).
+  - CSRF middleware renamed to `PreventRequestForgery` (it now also checks the `Sec-Fetch-Site` header): `App\Http\Middleware\VerifyCsrfToken` now extends it, and the Filament panel middleware uses it.
+  - Cache prefix / session cookie name: unchanged, because `config/cache.php` and `config/session.php` set them explicitly.
+  - Cache `serializable_classes` (now `false` by default): checked that the spatie permission cache still works.
+  - The other changes in the upgrade guide don't apply (no upsert, polymorphic pivots, custom cache stores, queues or domain routes).
 
 ### 2. Backend: Filament 3 → 4 → 5
 - [x] **Filament 3 → 4** (branch `feature/NLB-0/filament-4`). Now on Filament 4.15.
