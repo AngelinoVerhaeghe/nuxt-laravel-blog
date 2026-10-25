@@ -23,56 +23,23 @@ export default defineContentConfig( {
 
 Add a field to `schema` before using it in the frontmatter of a post. `title` and `description` are built in for `page` collections.
 
-### Showing one post
+### On the site
 
-A post's `path` is its file path without the extension, e.g. `content/blog/palia.md` → `/blog/palia`. Note that `/blog/[slug]` is already used for the API posts, so a markdown page needs its own route, for example `app/pages/articles/[...slug].vue`:
+Markdown posts are shown together with the API posts:
 
-```vue
-<script setup>
-const route = useRoute();
+- `/blog` and the homepage list both, newest first. `useBlogPosts()` (`frontend/app/composables/useBlogPosts.js`) fetches both and converts the markdown posts to the API's shape, so `PostCard` renders either kind.
+- `/blog/<slug>` (`frontend/app/pages/blog/[slug].vue`) renders the markdown post at `/blog/<slug>` with `<ContentRenderer>` if there is one, and otherwise loads the post from the API. A post's `path` is its file path without the extension, e.g. `content/blog/palia.md` → `/blog/palia`. If a markdown file and an API post share a slug, the markdown post wins.
 
-const { data: post } = await useAsyncData( `article-${ route.path }`, () => {
-    return queryCollection( 'blog' )
-        .path( route.path.replace( '/articles', '/blog' ) )
-        .first()
-} )
-</script>
+The frontmatter maps to the card like this:
 
-<template>
-    <article class="mx-auto max-w-7xl prose prose-invert p-2 sm:p-6 lg:p-8">
-        <ContentRenderer v-if="post" :value="post"/>
-    </article>
-</template>
-```
+| Frontmatter | Card |
+|---|---|
+| `title`, `description` | title, description |
+| `createAt` (`YYYY-MM-DD`) | date, shown as "Aug 22, 2023" like the API dates |
+| `originalUrl` | image file in `frontend/public/images/blog/` |
+| `category`, `author` | category badge, author |
 
-### Listing posts
-
-Pass the posts to the `PostCardMarkdown` component:
-
-```vue
-<script setup>
-const { data: posts } = await useAsyncData( 'posts', () => {
-    return queryCollection( 'blog' ).all()
-} );
-</script>
-
-<template>
-    <PostCardMarkdown :posts="posts"/>
-</template>
-```
-
-The component links to `post.path` (v2 used `post._path`). If the page lives under another route (like `/articles`), adjust the links there.
-
-For the three latest posts on the homepage:
-
-```javascript
-const { data: posts } = await useAsyncData( 'latest-posts', () => {
-    return queryCollection( 'blog' )
-        .order( 'createAt', 'DESC' )
-        .limit( 3 )
-        .all()
-} )
-```
+Markdown posts are rendered on the server; API posts are still fetched in the browser.
 
 ### Components in markdown
 

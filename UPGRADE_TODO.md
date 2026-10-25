@@ -113,7 +113,10 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - `Callout.vue`: slot wrapper `<p>` → `<div>` (markdown text is already a `<p>`, and `<p>` in `<p>` broke hydration).
   - `palia.md`: fixed the image path to `/images/blog/image.png`.
   - Verified with a temporary page (not committed): list query, frontmatter, `nord` highlighting and the `::callout` component all render.
-- [ ] No page renders the markdown posts yet (the `/blog/[slug]` route uses the Laravel API). Add one if markdown posts should be public, e.g. `app/pages/articles/[...slug].vue` with `queryCollection('blog')`. Note: the collection paths are `/blog/...`, so a new route needs its own prefix or `.path()` mapping.
+- [x] Markdown posts on the site (branch `feature/NLB/markdown-posts`): mixed into `/blog` instead of a separate route.
+  - `useBlogPosts()` merges the API posts with `content/blog` (newest first) and maps the markdown frontmatter to the API's shape; `/blog` and the homepage use it.
+  - `/blog/[slug]` renders a markdown post with `<ContentRenderer>` when one exists at that path, and otherwise falls back to the API.
+  - `PostCardApi` renamed to `PostCard` (it now renders both); removed the unused `PostCardMarkdown`. `backend/docs/Nuxt-Content.md` updated.
 - [x] Update `backend/docs/Nuxt-Content.md` to the v3 API (`queryCollection`, `content.config.ts`, MDC components) (branch `feature/NLB/cleanup`).
 - [x] Add `"type": "module"` to `package.json`: done in step 5, together with removing `tailwind.config.js`.
 

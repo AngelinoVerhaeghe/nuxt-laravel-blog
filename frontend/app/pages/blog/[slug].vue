@@ -3,15 +3,20 @@ const { apiBase } = useRuntimeConfig().public;
 const route = useRoute();
 const slug = route.params.slug;
 
+// A markdown post in content/blog wins; any other slug comes from the API
+const { data: markdownPost } = await useAsyncData(`blog-markdown-${ slug }`, () => queryCollection('blog').path(`/blog/${ slug }`).first());
+
 const { data: post, status } = await useFetch(() => `${ apiBase }/posts/${ slug }`, {
     transform: (_post) => _post.data,
-    server: false
+    server: false,
+    immediate: !markdownPost.value
 })
 </script>
 
 <template>
     <article class="prose prose-invert lg:prose-lg">
-        <div v-if="status === 'idle' || status === 'pending'">Loading...</div>
+        <ContentRenderer v-if="markdownPost" :value="markdownPost"/>
+        <div v-else-if="status === 'idle' || status === 'pending'">Loading...</div>
         <div v-else-if="post">
             <h2 class="text-2xl font-semibold mb-6">{{ post.title }}</h2>
             <nuxt-img v-if="post.imageUrl" class="w-full rounded-xl shadow-md h-48 object-cover mb-10" :src="post.imageUrl" :alt="post.title"/>
