@@ -2,7 +2,9 @@
 
 Package audit of 2026-10-25. Locked versions come from `composer.lock` / `package-lock.json`, latest versions from Packagist / npm.
 
-Local toolchain: PHP 8.3.6, Composer 2.9, Node 24, npm 11.
+Local toolchain: PHP 8.3 / 8.4 / 8.5 side by side (ondrej PPA), Composer 2.9, Node 24, npm 11.
+
+**PHP target: 8.5.** Do step 0 and Laravel 10 → 11 on PHP 8.3 (Laravel 10 only supports up to 8.3), then switch to 8.5 from Laravel 12 onward. Run the 8.3 steps with `php8.3 artisan …` / `php8.3 $(which composer) …`, since the default `php` is now 8.4.
 
 ## Backend (Laravel): installed vs. latest
 
@@ -20,7 +22,7 @@ Local toolchain: PHP 8.3.6, Composer 2.9, Node 24, npm 11.
 | pxlrbt/filament-excel | 2.1 | 3.6 / 4.1 (Filament 4/5) | major |
 | pxlrbt/filament-spotlight | 1.0 | 2.1 | major |
 | nunomaduro/collision | 7.9 | 8.9 | major |
-| phpunit/phpunit | 10.4 | 13.4 (**needs PHP 8.4**), so use 12.x | major |
+| phpunit/phpunit | 10.4 | 13.4 (needs PHP 8.4+, fine with the 8.5 target) | major |
 | spatie/laravel-ignition | 2.3 | 2.12 | minor |
 | pint / sail / mockery / faker / guzzle | old minors | current | minor |
 
@@ -47,12 +49,13 @@ Local toolchain: PHP 8.3.6, Composer 2.9, Node 24, npm 11.
 **Recommended order:** 0 → 1 → 2 → 3/4 → 5. Backend and frontend are separate, so they can go in two PRs. Doing step 4 before step 5 makes the Tailwind migration smaller.
 
 ### 0. Prep
-- [ ] Create a branch, e.g. `feature/NLB-x/upgrade-stack`.
-- [ ] Run `composer install` and `npm ci` on the current lock files and check that both apps still run, so there is a working starting point.
-- [ ] Add a few smoke tests before upgrading. Right now there are only the example tests and the Breeze auth tests. Cover:
-  - API: `GET /api/v1/posts`, `/posts/{slug}`, `/products`, `/products/{slug}`
-  - Filament: the login page and each resource index page load
-- [ ] Optional: add a GitHub Actions workflow that runs `php artisan test` and `nuxt build`.
+- [x] Create a branch: `feature/NLB-0/upgrade-prep`.
+- [x] Run `composer install` and `npm ci` on the current lock files and check that both apps still run, so there is a working starting point.
+  - Needed `ext-intl` (Filament) and an update of `ezyang/htmlpurifier` 4.16 → 4.19.1, because the locked version refused PHP 8.3.
+- [x] Add smoke tests before upgrading. Tests now run on in-memory SQLite (`phpunit.xml`).
+  - API: `tests/Feature/Api/PostApiTest.php`, `ProductApiTest.php` (list, show by slug, 404)
+  - Filament: `tests/Feature/Filament/PanelSmokeTest.php` (login, dashboard, all 11 resource index pages)
+- [x] Add a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs `php artisan test` and `nuxt build`. Bump its `php-version` when switching to 8.5.
 
 ### 1. Backend: Laravel 10 → 11 → 12 → 13 (one major at a time)
 - [ ] **L10 → 11.** The biggest step. Use Laravel Shift or follow the upgrade guide by hand.
@@ -62,7 +65,8 @@ Local toolchain: PHP 8.3.6, Composer 2.9, Node 24, npm 11.
   - Medialibrary 11: check whether the `media` table migration needs changes.
   - Laravel 11 no longer needs `doctrine/dbal`, so it should drop out of the lock file.
 - [ ] **L11 → 12.** Small step. Bump `tinker`, and update `spatie/laravel-permission` and medialibrary to versions that support 12.
-- [ ] **L12 → 13.** Requires PHP 8.3 or newer. Use `phpunit ^12`, not 13, unless moving to PHP 8.4. Set the root `"php"` constraint to `^8.3`.
+- [ ] Switch to PHP 8.5 (`sudo update-alternatives --set php /usr/bin/php8.5`), set the root `"php"` constraint to `^8.5`, and update the CI `php-version`.
+- [ ] **L12 → 13.** Bump to `phpunit ^13` (possible now that we're on PHP 8.5).
 - [ ] Remove `laravel/breeze`. It's only a scaffolding tool, the generated auth code is already in `routes/auth.php` and `Controllers/Auth`, and Breeze is deprecated.
 
 ### 2. Backend: Filament 3 → 4 → 5
