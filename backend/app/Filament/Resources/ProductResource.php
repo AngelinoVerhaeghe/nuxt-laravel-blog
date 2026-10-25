@@ -2,20 +2,35 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\ProductResource\Pages\ListProducts;
+use App\Filament\Resources\ProductResource\Pages\CreateProduct;
+use App\Filament\Resources\ProductResource\Pages\EditProduct;
 use App\Enums\ProductTypeEnum;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -28,11 +43,11 @@ class ProductResource extends Resource
 {
 	protected static ?string $model = Product::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+	protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-globe-alt';
 
 	protected static ?int $navigationSort = 0;
 
-	protected static ?string $navigationGroup = 'Shop';
+	protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
 	// Setup Global Search trough whole application, filter on 'name' column property
 	protected static ?string $recordTitleAttribute = 'name';
@@ -69,10 +84,10 @@ class ProductResource extends Resource
 		return parent::getGlobalSearchEloquentQuery()->with([ 'brand' ]);
 	}
 
-	public static function form( Form $form ): Form
+	public static function form( Schema $schema ): Schema
 	{
-		return $form
-			->schema([
+		return $schema
+			->components([
 				Group::make()
 					->schema([
 						Section::make()
@@ -160,57 +175,57 @@ class ProductResource extends Resource
 	{
 		return $table
 			->columns([
-				Tables\Columns\ImageColumn::make('image'),
-				Tables\Columns\TextColumn::make('name')
+				ImageColumn::make('image'),
+				TextColumn::make('name')
 					->searchable()
 					->sortable(),
-				Tables\Columns\TextColumn::make('brand.name')
+				TextColumn::make('brand.name')
 					->searchable()
 					->sortable()
 					->toggleable(),
-				Tables\Columns\IconColumn::make('is_visible')
+				IconColumn::make('is_visible')
 					->sortable()
 					->toggleable()
 					->label('Visibility')
 					->boolean(),
-				Tables\Columns\TextColumn::make('price')
+				TextColumn::make('price')
 					->sortable()
 					->toggleable(),
-				Tables\Columns\TextColumn::make('quantity')
+				TextColumn::make('quantity')
 					->sortable()
 					->toggleable(),
-				Tables\Columns\TextColumn::make('published_at')
+				TextColumn::make('published_at')
 					->sortable()
 					->date(),
-				Tables\Columns\TextColumn::make('type')
+				TextColumn::make('type')
 					->sortable()
 					->toggleable()
 			])
 			->filters([
-				Tables\Filters\TernaryFilter::make('is_visible')
+				TernaryFilter::make('is_visible')
 					->label('Visibility')
 					->boolean()
 					->trueLabel('Only Visible Products')
 					->falseLabel('Only Hidden Products')
 					->native(false),
-				Tables\Filters\SelectFilter::make('brand')
+				SelectFilter::make('brand')
 					->relationship('brand', 'name')
 			])
-			->actions([
-				Tables\Actions\ActionGroup::make([
-					Tables\Actions\ViewAction::make(),
-					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make()
+			->recordActions([
+				ActionGroup::make([
+					ViewAction::make(),
+					EditAction::make(),
+					DeleteAction::make()
 				])
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
+			->toolbarActions([
+				BulkActionGroup::make([
 					ExportBulkAction::make(),
-					Tables\Actions\DeleteBulkAction::make(),
+					DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			]);
 	}
 
@@ -224,9 +239,9 @@ class ProductResource extends Resource
 	public static function getPages(): array
 	{
 		return [
-			'index' => Pages\ListProducts::route('/'),
-			'create' => Pages\CreateProduct::route('/create'),
-			'edit' => Pages\EditProduct::route('/{record}/edit'),
+			'index' => ListProducts::route('/'),
+			'create' => CreateProduct::route('/create'),
+			'edit' => EditProduct::route('/{record}/edit'),
 		];
 	}
 }

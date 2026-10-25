@@ -2,11 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\CustomerResource\Pages\ListCustomers;
+use App\Filament\Resources\CustomerResource\Pages\CreateCustomer;
+use App\Filament\Resources\CustomerResource\Pages\EditCustomer;
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,37 +31,37 @@ class CustomerResource extends Resource
 {
 	protected static ?string $model = Customer::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-user-group';
+	protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
 	protected static ?int $navigationSort = 2;
 
-	protected static ?string $navigationGroup = 'Shop';
+	protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
-	public static function form( Form $form ): Form
+	public static function form( Schema $schema ): Schema
 	{
-		return $form
-			->schema([
-				Forms\Components\Section::make()
+		return $schema
+			->components([
+				Section::make()
 					->schema([
-						Forms\Components\TextInput::make('name')
+						TextInput::make('name')
 							->maxValue(50)
 							->required(),
-						Forms\Components\TextInput::make("email")
+						TextInput::make("email")
 							->label('Email Address')
 							->required()
 							->email()
 							->unique(ignoreRecord: true),
-						Forms\Components\TextInput::make('phone')
+						TextInput::make('phone')
 							->maxValue(50),
-						Forms\Components\DatePicker::make('date_of_birth'),
-						Forms\Components\TextInput::make('zip_code')
+						DatePicker::make('date_of_birth'),
+						TextInput::make('zip_code')
 							->required(),
-						Forms\Components\TextInput::make('city')
+						TextInput::make('city')
 							->required(),
-						Forms\Components\TextInput::make('address')
+						TextInput::make('address')
 							->required()
 							->columnSpan('full'),
-						Forms\Components\TextInput::make('country')
+						TextInput::make('country')
 							->required(),
 					])->columns(2)
 			]);
@@ -57,39 +71,39 @@ class CustomerResource extends Resource
 	{
 		return $table
 			->columns([
-				Tables\Columns\TextColumn::make('name')
+				TextColumn::make('name')
 					->sortable()
 					->searchable(),
-				Tables\Columns\TextColumn::make('email')
+				TextColumn::make('email')
 					->sortable()
 					->searchable(),
-				Tables\Columns\TextColumn::make('phone')
+				TextColumn::make('phone')
 					->sortable()
 					->searchable(),
-				Tables\Columns\TextColumn::make('city')
+				TextColumn::make('city')
 					->sortable()
 					->searchable(),
-				Tables\Columns\TextColumn::make('date_of_birth')
+				TextColumn::make('date_of_birth')
 					->date()
 					->sortable()
 			])
 			->filters([
 				//
 			])
-			->actions([
-				Tables\Actions\ActionGroup::make([
-					Tables\Actions\ViewAction::make(),
-					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make()
+			->recordActions([
+				ActionGroup::make([
+					ViewAction::make(),
+					EditAction::make(),
+					DeleteAction::make()
 				])
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			]);
 	}
 
@@ -103,9 +117,9 @@ class CustomerResource extends Resource
 	public static function getPages(): array
 	{
 		return [
-			'index' => Pages\ListCustomers::route('/'),
-			'create' => Pages\CreateCustomer::route('/create'),
-			'edit' => Pages\EditCustomer::route('/{record}/edit'),
+			'index' => ListCustomers::route('/'),
+			'create' => CreateCustomer::route('/create'),
+			'edit' => EditCustomer::route('/{record}/edit'),
 		];
 	}
 }

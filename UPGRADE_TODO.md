@@ -4,14 +4,14 @@ Package audit of 2026-10-25. Locked versions come from `composer.lock` / `packag
 
 Local toolchain: PHP 8.3 / 8.4 / 8.5 side by side (ondrej PPA), Composer 2.9, Node 24, npm 11.
 
-**PHP target: 8.5.** Do step 0 and Laravel 10 → 11 on PHP 8.3 (Laravel 10 only supports up to 8.3), then switch to 8.5 from Laravel 12 onward. Run the 8.3 steps with `php8.3 artisan …` / `php8.3 $(which composer) …`, since the default `php` is now 8.4.
+**PHP target: 8.5.** Done in step 2: `composer.json` requires `^8.5` and CI runs on 8.5. Make 8.5 your default CLI with `sudo update-alternatives --set php /usr/bin/php8.5` (the default `php` is 8.4 right now).
 
 ## Backend (Laravel): installed vs. latest
 
 | Package | Locked | Latest | Gap |
 |---|---|---|---|
 | laravel/framework | 10.28 | **13.38** (needs PHP 8.3) | 3 majors |
-| filament/filament (+ media-library plugin) | 3.0.73 / 3.0.0 | **5.10** | 2 majors |
+| filament/filament (+ media-library plugin) | 3.0.73 / 3.0.0 → **4.15** | **5.10** | 2 majors |
 | livewire/livewire (comes with Filament) | 3.0.7 | 4.4 | major |
 | laravel/sanctum | 3.3 | 4.3 | major |
 | laravel/breeze | 1.25 | 2.4 | major (replaced by starter kits) |
@@ -70,23 +70,20 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - Medialibrary 11: no changes needed (no custom conversions). Laravel 12 no longer needs `doctrine/dbal`.
   - Kept the Laravel 10 app structure (still supported).
 - [ ] Optional: switch to the slim app structure. This means removing `app/Http/Kernel.php`, `app/Console/Kernel.php`, `Exceptions/Handler.php`, the 9 default middleware classes and most of the providers, and moving their config into `bootstrap/app.php`.
-- [ ] Switch to PHP 8.5 (`sudo update-alternatives --set php /usr/bin/php8.5`), set the root `"php"` constraint to `^8.5`, and update the CI `php-version`.
-  - Blocker: `phpoffice/phpspreadsheet` in the lock (via `pxlrbt/filament-excel` 2 → `maatwebsite/excel`) requires PHP < 8.5. Do this switch together with step 2, where filament-excel goes to 3.x.
-  - Tests already pass on 8.5 but give 28 deprecation warnings; check them after the switch.
+- [x] Switch to PHP 8.5: done in step 2 (branch `feature/NLB-0/filament-4`).
 - [ ] **L12 → 13.** Bump to `phpunit ^13` (possible now that we're on PHP 8.5).
 
 ### 2. Backend: Filament 3 → 4 → 5
-Filament 4 needs Laravel 11.28 or newer, so do this after step 1, or in between the Laravel steps.
-- [ ] Run the official upgrade script: `composer require filament/upgrade:"^4.0" --dev` → `vendor/bin/filament-v4`. It rewrites most namespaces automatically.
-- [ ] Expect manual fixes in all 9 resources:
-  - `Tables\Actions\*` (View/Edit/Delete/BulkActionGroup/CreateAction) move to `Filament\Actions\*`.
-  - `->actions()` / `->bulkActions()` become `->recordActions()` / `->toolbarActions()`.
-  - `form(Form $form)` becomes `form(Schema $schema)`. `Section`, `Group` and `Card` move to `Filament\Schemas\Components`.
-  - Remove `Card` and `BooleanColumn`, which were already deprecated in v3. Use `Section` and `IconColumn::boolean()` instead.
-  - `Get`/`Set` in the `afterStateUpdated` closures (Tag, Product, Category) get new namespaces.
-- [ ] Update the panel plugins: `althinect/...-roles-permissions ^4`, `pxlrbt/filament-excel ^3`, `pxlrbt/filament-spotlight ^2`, `filament/spatie-laravel-media-library-plugin` to the same version as Filament.
+- [x] **Filament 3 → 4** (branch `feature/NLB-0/filament-4`). Now on Filament 4.15.
+  - Ran `vendor/bin/filament-v4 app` (Rector) on 41 files: `Form` → `Schema`, layout components → `Filament\Schemas\Components`, table actions → `Filament\Actions`, `->recordActions()` / `->toolbarActions()`, `Get`/`Set` → `Filament\Schemas\Components\Utilities`, new property types on resources and widgets. Reverted its unrelated import-only changes in `app/Http`.
+  - Manual: replaced `BooleanColumn` with `IconColumn::boolean()`, `->reactive()` with `->live()`, removed unused `Card`/`Get` imports.
+  - Plugins: `althinect/...-roles-permissions ^4` (pulls `spatie/laravel-permission` 6 → 8; none of the v7/v8 breaking changes apply), `pxlrbt/filament-spotlight ^2`, media-library plugin `^4`.
+  - `pxlrbt/filament-excel ^4` instead of 3: only v4 allows `maatwebsite/excel` 4 → `phpspreadsheet` 5, which supports PHP 8.5.
+  - PHP 8.5: `"php": "^8.5"`, CI on 8.5, `config/database.php` uses `Pdo\Mysql::ATTR_SSL_CA` (the old `PDO::MYSQL_ATTR_SSL_CA` gave a deprecation on every DB connection).
+  - Smoke tests now also render all 11 create forms and the post edit page (41 tests).
+  - Removed `filament/upgrade` again after use.
+- [x] Check the widgets: the dashboard smoke test renders all 4.
 - [ ] Check `AdminPanelProvider`: `->font('Dunbar')`, the empty `->favicon('')`, and the empty `Settings` `->url('')` user menu item.
-- [ ] Check the widgets. The chart and stat widget APIs changed slightly.
 - [ ] **Filament 4 → 5.** This is mainly the move to Livewire 4. Bump everything Filament-related to `^5`, then run `php artisan filament:upgrade`.
 
 ### 3. Frontend: Nuxt 3.7 → 4

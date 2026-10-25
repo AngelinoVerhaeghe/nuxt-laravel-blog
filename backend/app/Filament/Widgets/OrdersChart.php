@@ -11,7 +11,7 @@ class OrdersChart extends ChartWidget
 {
 	protected static ?int $sort = 3;
 
-	protected static ?string $heading = 'Chart';
+	protected ?string $heading = 'Chart';
 
 	protected function getData(): array
 	{

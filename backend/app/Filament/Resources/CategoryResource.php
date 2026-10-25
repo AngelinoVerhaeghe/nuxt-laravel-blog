@@ -2,20 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\CategoryResource\RelationManagers\ProductsRelationManager;
+use App\Filament\Resources\CategoryResource\Pages\ListCategories;
+use App\Filament\Resources\CategoryResource\Pages\CreateCategory;
+use App\Filament\Resources\CategoryResource\Pages\EditCategory;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Product;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -26,10 +36,10 @@ class CategoryResource extends Resource
 {
 	protected static ?string $model = Category::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-swatch';
+	protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-swatch';
 
 	// Create a dropdown group in the sidebar
-	protected static ?string $navigationGroup = 'Extra';
+	protected static string | \UnitEnum | null $navigationGroup = 'Extra';
 
 	// Place this dropdown item in an order u want
 	protected static ?int $navigationSort = 1;
@@ -37,10 +47,10 @@ class CategoryResource extends Resource
 	// Don't show an item on the sidebar
 	//protected static bool $shouldRegisterNavigation = false;
 
-	public static function form( Form $form ): Form
+	public static function form( Schema $schema ): Schema
 	{
-		return $form
-			->schema([
+		return $schema
+			->components([
 				Group::make()
 					->schema([
 						Section::make()
@@ -92,7 +102,7 @@ class CategoryResource extends Resource
 					->label('Parent')
 					->searchable()
 					->sortable(),
-				Tables\Columns\IconColumn::make('is_visible')
+				IconColumn::make('is_visible')
 					->label('Visibility')
 					->boolean()
 					->sortable(),
@@ -105,36 +115,36 @@ class CategoryResource extends Resource
 			->filters([
 				//
 			])
-			->actions([
-				Tables\Actions\ActionGroup::make([
-					Tables\Actions\ViewAction::make(),
-					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make()
+			->recordActions([
+				ActionGroup::make([
+					ViewAction::make(),
+					EditAction::make(),
+					DeleteAction::make()
 				])
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			]);
 	}
 
 	public static function getRelations(): array
 	{
 		return [
-			RelationManagers\ProductsRelationManager::class
+			ProductsRelationManager::class
 		];
 	}
 
 	public static function getPages(): array
 	{
 		return [
-			'index' => Pages\ListCategories::route('/'),
-			'create' => Pages\CreateCategory::route('/create'),
-			'edit' => Pages\EditCategory::route('/{record}/edit'),
+			'index' => ListCategories::route('/'),
+			'create' => CreateCategory::route('/create'),
+			'edit' => EditCategory::route('/{record}/edit'),
 		];
 	}
 }

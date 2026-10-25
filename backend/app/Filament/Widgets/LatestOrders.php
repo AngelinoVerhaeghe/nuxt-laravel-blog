@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\OrderResource;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -20,17 +21,17 @@ class LatestOrders extends BaseWidget
 			->defaultPaginationPageOption(5)
 			->defaultSort('created_at', 'desc')
 			->columns([
-				Tables\Columns\TextColumn::make('number')
+				TextColumn::make('number')
 					->searchable()
 					->sortable(),
-				Tables\Columns\TextColumn::make('customer.name')
+				TextColumn::make('customer.name')
 					->searchable()
 					->sortable()
 					->toggleable(),
-				Tables\Columns\TextColumn::make('status')
+				TextColumn::make('status')
 					->searchable()
 					->sortable(),
-				Tables\Columns\TextColumn::make('created_at')
+				TextColumn::make('created_at')
 					->label('Order Date')
 					->date()
 			]);

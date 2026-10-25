@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Filament;
 
+use App\Models\Category;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -51,5 +53,31 @@ class PanelSmokeTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get($path)
             ->assertOk();
+    }
+
+    #[DataProvider('resourcePaths')]
+    public function test_resource_create_pages_render(string $path): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get($path.'/create')
+            ->assertOk();
+    }
+
+    public function test_the_post_edit_page_renders(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::create(['name' => 'News', 'slug' => 'news']);
+        $post = Post::create([
+            'user_id' => $user->id,
+            'category_id' => $category->id,
+            'title' => 'Hello World',
+            'slug' => 'hello-world',
+            'description' => 'First post',
+        ]);
+
+        $this->actingAs($user)
+            ->get("/dashboard/posts/{$post->slug}/edit")
+            ->assertOk()
+            ->assertSee('Hello World');
     }
 }
