@@ -57,17 +57,23 @@ Local toolchain: PHP 8.3 / 8.4 / 8.5 side by side (ondrej PPA), Composer 2.9, No
   - Filament: `tests/Feature/Filament/PanelSmokeTest.php` (login, dashboard, all 11 resource index pages)
 - [x] Add a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs `php artisan test` and `nuxt build`. Bump its `php-version` when switching to 8.5.
 
-### 1. Backend: Laravel 10 → 11 → 12 → 13 (one major at a time)
-- [ ] **L10 → 11.** The biggest step. Use Laravel Shift or follow the upgrade guide by hand.
-  - Bump `sanctum ^4`, `collision ^8`, `phpunit ^11`, `spatie/laravel-permission ^6`, `spatie/laravel-medialibrary ^11`.
-  - Optional: switch to the slim app structure. This means removing `app/Http/Kernel.php`, `app/Console/Kernel.php`, `Exceptions/Handler.php`, the 9 default middleware classes and most of the providers, and moving their config into `bootstrap/app.php`.
-  - Sanctum 4: publish its migrations (Laravel 11 no longer loads them automatically). The API routes need `install:api` or registering in `bootstrap/app.php` if going slim.
-  - Medialibrary 11: check whether the `media` table migration needs changes.
-  - Laravel 11 no longer needs `doctrine/dbal`, so it should drop out of the lock file.
-- [ ] **L11 → 12.** Small step. Bump `tinker`, and update `spatie/laravel-permission` and medialibrary to versions that support 12.
+### 1. Backend: Laravel 10 → 12 → 13
+Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of security advisories that won't be patched (11 is end-of-life). The upgrade guides for 11 and 12 were applied in one step instead.
+
+- [x] **L10 → 12** (branch `feature/NLB-0/laravel-12`). Now on Laravel 12.70, Filament 3.3, Livewire 3.8, Carbon 3.
+  - Bumped `sanctum ^4`, `tinker ^2.9`, `collision ^8.1`, `phpunit ^11.5`, `ignition ^2.4`, `sail ^1.26`, Filament + media-library plugin `^3.2`. That pulled in `spatie/laravel-permission` 6 and `spatie/laravel-medialibrary` 11.
+  - Removed `laravel/breeze`. The generated auth code in `routes/auth.php` and `Controllers/Auth` stays.
+  - Pinned `althinect/filament-spatie-roles-permissions` to **2.3.2**: 2.3.3 claims Filament 3 support but uses the Filament 4 `getNavigationGroup()` signature and crashes. Unpin in step 2.
+  - Replaced the published permission migration with the v6 version. Same schema; v6 removed the static `PermissionRegistrar::$pivot*` properties it used.
+  - `UserFactory`: replaced the hard-coded bcrypt hash with `Hash::make()`. Laravel 11+ rejects hashes whose cost doesn't match the config.
+  - Sanctum 4: migration was already published; renamed the config keys to `validate_csrf_token` + `authenticate_session`.
+  - Medialibrary 11: no changes needed (no custom conversions). Laravel 12 no longer needs `doctrine/dbal`.
+  - Kept the Laravel 10 app structure (still supported).
+- [ ] Optional: switch to the slim app structure. This means removing `app/Http/Kernel.php`, `app/Console/Kernel.php`, `Exceptions/Handler.php`, the 9 default middleware classes and most of the providers, and moving their config into `bootstrap/app.php`.
 - [ ] Switch to PHP 8.5 (`sudo update-alternatives --set php /usr/bin/php8.5`), set the root `"php"` constraint to `^8.5`, and update the CI `php-version`.
+  - Blocker: `phpoffice/phpspreadsheet` in the lock (via `pxlrbt/filament-excel` 2 → `maatwebsite/excel`) requires PHP < 8.5. Do this switch together with step 2, where filament-excel goes to 3.x.
+  - Tests already pass on 8.5 but give 28 deprecation warnings; check them after the switch.
 - [ ] **L12 → 13.** Bump to `phpunit ^13` (possible now that we're on PHP 8.5).
-- [ ] Remove `laravel/breeze`. It's only a scaffolding tool, the generated auth code is already in `routes/auth.php` and `Controllers/Auth`, and Breeze is deprecated.
 
 ### 2. Backend: Filament 3 → 4 → 5
 Filament 4 needs Laravel 11.28 or newer, so do this after step 1, or in between the Laravel steps.
