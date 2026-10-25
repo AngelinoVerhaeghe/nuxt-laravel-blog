@@ -7,7 +7,7 @@ const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
 </script>
 
 <template>
-    <h1 class="text-3xl">Blogs</h1>
+    <h1 class="text-3xl text-white">Blogs</h1>
 
     <section class="grid sm:grid-cols-2 gap-10 mt-8">
         <div v-if="status === 'idle' || status === 'pending'">

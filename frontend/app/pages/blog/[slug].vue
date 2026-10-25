@@ -10,7 +10,7 @@ const { data: post, status } = await useFetch(() => `${ apiBase }/posts/${ slug 
 </script>
 
 <template>
-    <article class="prose lg:prose-lg">
+    <article class="prose prose-invert lg:prose-lg">
         <div v-if="status === 'idle' || status === 'pending'">Loading...</div>
         <div v-else-if="post">
             <h2 class="text-2xl font-semibold mb-6">{{ post.title }}</h2>

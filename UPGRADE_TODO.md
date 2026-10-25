@@ -111,7 +111,7 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - `palia.md`: fixed the image path to `/images/blog/image.png`.
   - Verified with a temporary page (not committed): list query, frontmatter, `nord` highlighting and the `::callout` component all render.
 - [ ] No page renders the markdown posts yet (the `/blog/[slug]` route uses the Laravel API). Add one if markdown posts should be public, e.g. `app/pages/articles/[...slug].vue` with `queryCollection('blog')`. Note: the collection paths are `/blog/...`, so a new route needs its own prefix or `.path()` mapping.
-- [ ] Update `backend/docs/Nuxt-Content.md`: it still shows the v2 API (`queryContent`, `ContentDoc`).
+- [x] Update `backend/docs/Nuxt-Content.md` to the v3 API (`queryCollection`, `content.config.ts`, MDC components) (branch `feature/NLB/cleanup`).
 - [x] Add `"type": "module"` to `package.json`: done in step 5, together with removing `tailwind.config.js`.
 
 ### 5. Frontend: Tailwind 3 → 4
@@ -123,11 +123,12 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
 
 ### 6. Finish
 - [x] Bump the minor versions: done along the way (`@headlessui/vue` 1.7.23, `@heroicons/vue` 2.2, `vue` 3.5, pint 1.32, sail 1.69).
-- [ ] Update both READMEs with the new requirements (PHP 8.5, Node 22+, MySQL; frontend env var `NUXT_PUBLIC_API_BASE`).
-- [ ] Optional: add `.nvmrc` and set `"config.platform.php"` in composer.json so the versions are pinned.
+- [x] Rewrote both READMEs for this project: stack, requirements (PHP 8.5, Node 22.5+, MySQL 8), setup, `NUXT_PUBLIC_API_BASE`, tests. `.env.example` now uses `APP_URL=http://localhost:8000` (image URLs are built from it).
+- [x] Added `frontend/.nvmrc` (Node 24); CI reads the Node version from it. `config.platform.php` isn't needed: composer.json already requires `^8.5`.
 
 ### Follow-ups found during the upgrade (not caused by it)
-- [ ] Blog post page (`/blog/[slug]`): title and text are dark gray on the black background (`prose` default colors). Use `prose-invert` or explicit text colors.
-- [ ] Mobile layout of the homepage: the "Recent Article" and "Latest Blog Posts" columns stay side by side at 390px and get very narrow.
-- [ ] `frontend/.npmrc` only contains pnpm settings (`shamefully-hoist`, `strict-peer-dependencies`), which npm warns about. Delete it.
-- [ ] Posts without an image show no category badge on the card: the badge is positioned over the image (`absolute bottom-4`), so without an image it ends up outside the card and gets clipped.
+- [x] Blog post page: added `prose-invert`. The "Blogs" heading on `/blog` had the same problem and is now `text-white`.
+- [x] Mobile layout of the homepage: the two columns now stack below `lg` (`grid-cols-1 lg:grid-cols-5`).
+- [ ] `frontend/.npmrc` only contains pnpm settings (`shamefully-hoist`, `strict-peer-dependencies`), which npm warns about. Delete it (left for a manual change).
+- [x] Posts without an image: the category badge is now shown at the top of the card instead of being clipped.
+- [ ] **Security:** `User::canAccessPanel()` always returns `true`, and the Breeze API route `POST /register` is still active. Anyone who registers can open the admin panel. Restrict the panel (e.g. by role or email domain) and/or remove the register route.
