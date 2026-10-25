@@ -2,23 +2,33 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\PostResource\Pages\ListPosts;
+use App\Filament\Resources\PostResource\Pages\CreatePost;
+use App\Filament\Resources\PostResource\Pages\EditPost;
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -28,14 +38,14 @@ class PostResource extends Resource
 {
 	protected static ?string $model = Post::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
+	protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rocket-launch';
 
 	//protected static ?string $label = 'Blogs';
 
-	public static function form( Form $form ): Form
+	public static function form( Schema $schema ): Schema
 	{
-		return $form
-			->schema([
+		return $schema
+			->components([
 				Group::make()
 					->schema([
 						Section::make('Informatie')
@@ -81,25 +91,25 @@ class PostResource extends Resource
 				TextColumn::make('created_at')
 					->date()
 					->sortable(),
-				BooleanColumn::make('is_published')->label(__('Published'))
+				IconColumn::make('is_published')->label(__('Published'))->boolean()
 			])
 			->filters([
 				//
 			])
-			->actions([
-				Tables\Actions\ActionGroup::make([
-					Tables\Actions\ViewAction::make(),
-					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make()
+			->recordActions([
+				ActionGroup::make([
+					ViewAction::make(),
+					EditAction::make(),
+					DeleteAction::make()
 				])
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			]);
 	}
 
@@ -113,9 +123,9 @@ class PostResource extends Resource
 	public static function getPages(): array
 	{
 		return [
-			'index' => Pages\ListPosts::route('/'),
-			'create' => Pages\CreatePost::route('/create'),
-			'edit' => Pages\EditPost::route('/{record}/edit'),
+			'index' => ListPosts::route('/'),
+			'create' => CreatePost::route('/create'),
+			'edit' => EditPost::route('/{record}/edit'),
 		];
 	}
 }

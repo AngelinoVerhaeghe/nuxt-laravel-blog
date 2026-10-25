@@ -2,13 +2,32 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
+use App\Filament\Resources\OrderResource\Pages\ListOrders;
+use App\Filament\Resources\OrderResource\Pages\CreateOrder;
+use App\Filament\Resources\OrderResource\Pages\EditOrder;
 use App\Enums\OrderStatusEnum;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,11 +37,11 @@ class OrderResource extends Resource
 {
 	protected static ?string $model = Order::class;
 
-	protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+	protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shopping-bag';
 
 	protected static ?int $navigationSort = 3;
 
-	protected static ?string $navigationGroup = 'Shop';
+	protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
 	public static function getNavigationBadge(): ?string
 	{
@@ -35,61 +54,61 @@ class OrderResource extends Resource
 		return static::getModel()::where('status', '=', 'processing')->count() > 10 ? 'warning' : 'primary';
 	}
 
-	public static function form( Form $form ): Form
+	public static function form( Schema $schema ): Schema
 	{
-		return $form
-			->schema([
-				Forms\Components\Wizard::make([
-					Forms\Components\Wizard\Step::make('Order Details')
+		return $schema
+			->components([
+				Wizard::make([
+					Step::make('Order Details')
 						->schema([
-							Forms\Components\TextInput::make('number')
+							TextInput::make('number')
 								->default('OR-' . random_int(100000, 9999999))
 								->disabled()
 								->dehydrated()
 								->required(),
-							Forms\Components\Select::make('customer_id')
+							Select::make('customer_id')
 								->relationship('customer', 'name')
 								->searchable()
 								->required(),
-							Forms\Components\TextInput::make('shipping_price')
+							TextInput::make('shipping_price')
 							->label('Shipping Costs')
 							->dehydrated()
 							->numeric()
 							->required(),
-							Forms\Components\Select::make('type')
+							Select::make('type')
 								->options([
 									'Pending' => OrderStatusEnum::PENDING->value,
 									'Processing' => OrderStatusEnum::PROCESSING->value,
 									'Completed' => OrderStatusEnum::COMPLETED->value,
 									'Declined' => OrderStatusEnum::DECLINED->value,
 								])->required(),
-							Forms\Components\MarkdownEditor::make('notes')
+							MarkdownEditor::make('notes')
 								->columnSpanFull()
 						])->columns(2),
-					Forms\Components\Wizard\Step::make('Order Items')
+					Step::make('Order Items')
 						->schema([
-							Forms\Components\Repeater::make('items')
+							Repeater::make('items')
 								->relationship()
 								->schema([
-									Forms\Components\Select::make('product_id')
+									Select::make('product_id')
 										->label('Product')
 										->options(Product::query()->pluck('name', 'id'))
 										->required()
-										->reactive()
-										->afterStateUpdated(fn( $state, Forms\Set $set ) => $set('unit_price', Product::find($state)?->price ?? 0)),
-									Forms\Components\TextInput::make('quantity')
+										->live()
+										->afterStateUpdated(fn( $state, Set $set ) => $set('unit_price', Product::find($state)?->price ?? 0)),
+									TextInput::make('quantity')
 										->numeric()
 										->live()
 										->dehydrated()
 										->default(1)
 										->required(),
-									Forms\Components\TextInput::make('unit_price')
+									TextInput::make('unit_price')
 										->label('Unit Price')
 										->disabled()
 										->dehydrated()
 										->numeric()
 										->required(),
-									Forms\Components\Placeholder::make('total_price')
+									Placeholder::make('total_price')
 										->label('Total Price')
 										->content(function ( $get ) {
 											return $get('quantity') * $get('unit_price');
@@ -104,38 +123,38 @@ class OrderResource extends Resource
 	{
 		return $table
 			->columns([
-				Tables\Columns\TextColumn::make('number')
+				TextColumn::make('number')
 					->searchable()
 					->sortable(),
-				Tables\Columns\TextColumn::make('customer.name')
+				TextColumn::make('customer.name')
 					->searchable()
 					->sortable()
 					->toggleable(),
-				Tables\Columns\TextColumn::make('status')
+				TextColumn::make('status')
 					->searchable()
 					->sortable(),
-				Tables\Columns\TextColumn::make('created_at')
+				TextColumn::make('created_at')
 					->label('Order Date')
 					->date()
 			])
 			->filters([
 				//
 			])
-			->actions([
-				Tables\Actions\ActionGroup::make([
-					Tables\Actions\ViewAction::make(),
-					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make()
+			->recordActions([
+				ActionGroup::make([
+					ViewAction::make(),
+					EditAction::make(),
+					DeleteAction::make()
 				])
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
+			->toolbarActions([
+				BulkActionGroup::make([
 					ExportBulkAction::make(),
-					Tables\Actions\DeleteBulkAction::make(),
+					DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			]);
 	}
 
@@ -149,9 +168,9 @@ class OrderResource extends Resource
 	public static function getPages(): array
 	{
 		return [
-			'index' => Pages\ListOrders::route('/'),
-			'create' => Pages\CreateOrder::route('/create'),
-			'edit' => Pages\EditOrder::route('/{record}/edit'),
+			'index' => ListOrders::route('/'),
+			'create' => CreateOrder::route('/create'),
+			'edit' => EditOrder::route('/{record}/edit'),
 		];
 	}
 }

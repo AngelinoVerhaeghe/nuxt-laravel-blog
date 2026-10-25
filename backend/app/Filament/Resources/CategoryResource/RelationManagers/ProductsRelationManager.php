@@ -2,6 +2,19 @@
 
 namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use App\Enums\ProductTypeEnum;
 use App\Models\Product;
 use Filament\Forms;
@@ -11,8 +24,6 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -24,13 +35,13 @@ class ProductsRelationManager extends RelationManager
 {
 	protected static string $relationship = 'products';
 
-	public function form( Form $form ): Form
+	public function form( Schema $schema ): Schema
 	{
-		return $form
-			->schema([
-				Forms\Components\Tabs::make('Products')
+		return $schema
+			->components([
+				Tabs::make('Products')
 					->tabs([
-						Forms\Components\Tabs\Tab::make('Information')
+						Tab::make('Information')
 							->schema([
 								TextInput::make('name')
 									->required()
@@ -50,7 +61,7 @@ class ProductsRelationManager extends RelationManager
 									->unique(Product::class, 'slug', ignoreRecord: true),
 								MarkdownEditor::make("description")->columnSpan('full')
 							])->columns(2),
-						Forms\Components\Tabs\Tab::make('Pricing & Inventory')
+						Tab::make('Pricing & Inventory')
 							->schema([
 								TextInput::make('sku')
 									->label('SKU (Stock Keeping Unit)')
@@ -73,7 +84,7 @@ class ProductsRelationManager extends RelationManager
 										'Accessories' => ProductTypeEnum::ACCESSORIES->value,
 									])
 							])->columns(2),
-						Forms\Components\Tabs\Tab::make('Additional Information')
+						Tab::make('Additional Information')
 							->schema([
 								Toggle::make('is_visible')
 									->label('Visibility')
@@ -105,29 +116,29 @@ class ProductsRelationManager extends RelationManager
 		return $table
 			->recordTitleAttribute('name')
 			->columns([
-				Tables\Columns\ImageColumn::make('image'),
-				Tables\Columns\TextColumn::make('name')
+				ImageColumn::make('image'),
+				TextColumn::make('name')
 					->searchable()
 					->sortable(),
-				Tables\Columns\TextColumn::make('brand.name')
+				TextColumn::make('brand.name')
 					->searchable()
 					->sortable()
 					->toggleable(),
-				Tables\Columns\IconColumn::make('is_visible')
+				IconColumn::make('is_visible')
 					->sortable()
 					->toggleable()
 					->label('Visibility')
 					->boolean(),
-				Tables\Columns\TextColumn::make('price')
+				TextColumn::make('price')
 					->sortable()
 					->toggleable(),
-				Tables\Columns\TextColumn::make('quantity')
+				TextColumn::make('quantity')
 					->sortable()
 					->toggleable(),
-				Tables\Columns\TextColumn::make('published_at')
+				TextColumn::make('published_at')
 					->sortable()
 					->date(),
-				Tables\Columns\TextColumn::make('type')
+				TextColumn::make('type')
 					->sortable()
 					->toggleable()
 			])
@@ -135,21 +146,21 @@ class ProductsRelationManager extends RelationManager
 				//
 			])
 			->headerActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			])
-			->actions([
-				Tables\Actions\ActionGroup::make([
-					Tables\Actions\EditAction::make(),
-					Tables\Actions\DeleteAction::make(),
+			->recordActions([
+				ActionGroup::make([
+					EditAction::make(),
+					DeleteAction::make(),
 				])
 			])
-			->bulkActions([
-				Tables\Actions\BulkActionGroup::make([
-					Tables\Actions\DeleteBulkAction::make(),
+			->toolbarActions([
+				BulkActionGroup::make([
+					DeleteBulkAction::make(),
 				]),
 			])
 			->emptyStateActions([
-				Tables\Actions\CreateAction::make(),
+				CreateAction::make(),
 			]);
 	}
 }

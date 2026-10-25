@@ -8,7 +8,7 @@ use Filament\Widgets\ChartWidget;
 
 class ProductsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Chart';
+    protected ?string $heading = 'Chart';
 
 	protected static ?int $sort = 3;
     protected function getData(): array
