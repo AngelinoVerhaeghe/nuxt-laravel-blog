@@ -11,11 +11,11 @@ class ProductApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function createProduct(): Product
+    private function createProduct(array $attributes = []): Product
     {
-        $brand = Brand::create(['name' => 'Funko', 'slug' => 'funko']);
+        $brand = Brand::firstOrCreate(['slug' => 'funko'], ['name' => 'Funko']);
 
-        return Product::create([
+        return Product::create([...[
             'brand_id' => $brand->id,
             'name' => 'Pikachu',
             'slug' => 'pikachu',
@@ -26,7 +26,7 @@ class ProductApiTest extends TestCase
             'is_visible' => true,
             'type' => 'Pop!',
             'published_at' => '2026-01-01',
-        ]);
+        ], ...$attributes]);
     }
 
     public function test_products_can_be_listed(): void
@@ -48,6 +48,39 @@ class ProductApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.sku', 'FUN-001')
             ->assertJsonPath('data.type', 'Pop!');
+    }
+
+    public function test_hidden_and_not_yet_available_products_are_not_listed(): void
+    {
+        $this->createProduct();
+        $this->createProduct(['slug' => 'hidden', 'sku' => 'FUN-002', 'is_visible' => false]);
+        $this->createProduct(['slug' => 'coming-soon', 'sku' => 'FUN-003', 'published_at' => now()->addDay()]);
+
+        $this->getJson('/api/v1/products')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.slug', 'pikachu');
+    }
+
+    public function test_a_product_available_from_today_is_listed(): void
+    {
+        $this->createProduct(['published_at' => now()->toDateString()]);
+
+        $this->getJson('/api/v1/products')->assertJsonCount(1, 'data');
+    }
+
+    public function test_a_hidden_product_returns_404(): void
+    {
+        $this->createProduct(['is_visible' => false]);
+
+        $this->getJson('/api/v1/products/pikachu')->assertNotFound();
+    }
+
+    public function test_a_not_yet_available_product_returns_404(): void
+    {
+        $this->createProduct(['published_at' => now()->addDay()]);
+
+        $this->getJson('/api/v1/products/pikachu')->assertNotFound();
     }
 
     public function test_an_unknown_product_returns_404(): void
