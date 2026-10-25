@@ -30,6 +30,13 @@ class PanelSmokeTest extends TestCase
             ->assertOk();
     }
 
+    public function test_the_profile_page_renders_for_editors(): void
+    {
+        $this->actingAs(User::factory()->role('editor')->create())
+            ->get('/dashboard/profile')
+            ->assertOk();
+    }
+
     public static function resourcePaths(): array
     {
         return [
