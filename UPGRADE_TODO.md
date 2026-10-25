@@ -11,8 +11,8 @@ Local toolchain: PHP 8.3 / 8.4 / 8.5 side by side (ondrej PPA), Composer 2.9, No
 | Package | Locked | Latest | Gap |
 |---|---|---|---|
 | laravel/framework | 10.28 | **13.38** (needs PHP 8.3) | 3 majors |
-| filament/filament (+ media-library plugin) | 3.0.73 / 3.0.0 → **4.15** | **5.10** | 2 majors |
-| livewire/livewire (comes with Filament) | 3.0.7 | 4.4 | major |
+| filament/filament (+ media-library plugin) | 3.0.73 / 3.0.0 → **5.10** ✅ | **5.10** | done |
+| livewire/livewire (comes with Filament) | 3.0.7 → **4.4** ✅ | 4.4 | done |
 | laravel/sanctum | 3.3 | 4.3 | major |
 | laravel/breeze | 1.25 | 2.4 | major (replaced by starter kits) |
 | laravel/tinker | 2.8 | 3.0 | major |
@@ -84,7 +84,10 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - Removed `filament/upgrade` again after use.
 - [x] Check the widgets: the dashboard smoke test renders all 4.
 - [ ] Check `AdminPanelProvider`: `->font('Dunbar')`, the empty `->favicon('')`, and the empty `Settings` `->url('')` user menu item.
-- [ ] **Filament 4 → 5.** This is mainly the move to Livewire 4. Bump everything Filament-related to `^5`, then run `php artisan filament:upgrade`.
+- [x] **Filament 4 → 5** (branch `feature/NLB/filament-5`). Now on Filament 5.10 and Livewire 4.4.
+  - `vendor/bin/filament-v5 app` found nothing to change. Bumped `filament/filament` and the media-library plugin to `^5`; the other plugins (roles-permissions 4, filament-excel 4, spotlight 2) already support 5.
+  - The app has no own Livewire config, components or `wire:` markup, so the Livewire 4 breaking changes don't apply.
+  - Removed `filament/upgrade` again after use.
 
 ### 3. Frontend: Nuxt 3.7 → 4
 - [ ] First bump to the latest Nuxt 3.x and set `future: { compatibilityVersion: 4 }`, then move to `nuxt@^4`.
