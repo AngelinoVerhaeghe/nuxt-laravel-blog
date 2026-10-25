@@ -42,8 +42,9 @@ All backend packages are on their latest major. ✅
 | axios | 1.5 | removed (unused) |
 | @types/node | 18 | **24** |
 | @headlessui/vue, @heroicons/vue | 1.7.16 / 2.0.18 | **1.7.23 / 2.2** |
-| tailwindcss | 3.3 | 3.3 → **4.3** in step 5 |
-| typography, postcss, autoprefixer | | step 5 (autoprefixer isn't needed with Tailwind 4) |
+| tailwindcss | 3.3 | **4.3** (via `@tailwindcss/vite`) |
+| @tailwindcss/typography | 0.5.10 | **0.5.20** |
+| postcss, autoprefixer | 8.4 / 10.4 | removed (not needed with the Vite plugin) |
 
 ---
 
@@ -111,17 +112,22 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - Verified with a temporary page (not committed): list query, frontmatter, `nord` highlighting and the `::callout` component all render.
 - [ ] No page renders the markdown posts yet (the `/blog/[slug]` route uses the Laravel API). Add one if markdown posts should be public, e.g. `app/pages/articles/[...slug].vue` with `queryCollection('blog')`. Note: the collection paths are `/blog/...`, so a new route needs its own prefix or `.path()` mapping.
 - [ ] Update `backend/docs/Nuxt-Content.md`: it still shows the v2 API (`queryContent`, `ContentDoc`).
-- [ ] Add `"type": "module"` to `package.json` after step 5. Node warns about it now, but `tailwind.config.js` still uses `module.exports`.
+- [x] Add `"type": "module"` to `package.json`: done in step 5, together with removing `tailwind.config.js`.
 
 ### 5. Frontend: Tailwind 3 → 4
-- [ ] Run `npx @tailwindcss/upgrade`.
-- [ ] Switch to `@tailwindcss/vite`. Remove the `postcss` block and `autoprefixer`.
-- [ ] In `main.css`, replace the three `@tailwind` lines with `@import "tailwindcss"` and `@plugin "@tailwindcss/typography"`. The font families move into `@theme`.
-- [ ] Delete `tailwind.config.js`.
-- [ ] Check the pages visually. Default border and ring colors and some shadow and rounded sizes changed in v4.
+- [x] **Tailwind 4** (branch `feature/NLB/tailwind-4`). Now on Tailwind 4.3.
+  - Ran `npx @tailwindcss/upgrade`: `tailwind.config.js` moved into `main.css` (`@import 'tailwindcss'`, `@plugin '@tailwindcss/typography'`, fonts in `@theme`), plus a compatibility rule that keeps the v3 default border color. Renamed classes: `rounded` → `rounded-sm`, `shadow-sm` → `shadow-xs`, `outline-none` → `outline-hidden`, `max-w-screen-xl` → `max-w-(--breakpoint-xl)`, `border-l-[2px]` → `border-l-2`.
+  - Manual: `bg-white bg-opacity-10` → `bg-white/10` on the homepage (`bg-opacity-*` no longer exists, so the box would have turned solid white).
+  - Switched from PostCSS to `@tailwindcss/vite`; removed `postcss` and `autoprefixer`. Added `"type": "module"` to `package.json`.
+  - Compared before/after screenshots of `/`, `/blog` and a blog post at 1280px and 390px: same layout; colors are slightly more saturated because v4 defines its palette in `oklch`.
 
 ### 6. Finish
-- [ ] Bump the minor versions (`@headlessui/vue`, `@heroicons/vue`, `vue`, pint, sail, etc.).
-- [ ] Commit the new `composer.lock` and `package-lock.json`, then run the tests and do `nuxt build` + `nuxt preview` on the blog and the dashboard.
-- [ ] Update both READMEs with the new requirements (PHP 8.3+, Node 22+).
+- [x] Bump the minor versions: done along the way (`@headlessui/vue` 1.7.23, `@heroicons/vue` 2.2, `vue` 3.5, pint 1.32, sail 1.69).
+- [ ] Update both READMEs with the new requirements (PHP 8.5, Node 22+, MySQL; frontend env var `NUXT_PUBLIC_API_BASE`).
 - [ ] Optional: add `.nvmrc` and set `"config.platform.php"` in composer.json so the versions are pinned.
+
+### Follow-ups found during the upgrade (not caused by it)
+- [ ] Blog post page (`/blog/[slug]`): title and text are dark gray on the black background (`prose` default colors). Use `prose-invert` or explicit text colors.
+- [ ] Mobile layout of the homepage: the "Recent Article" and "Latest Blog Posts" columns stay side by side at 390px and get very narrow.
+- [ ] `frontend/.npmrc` only contains pnpm settings (`shamefully-hoist`, `strict-peer-dependencies`), which npm warns about. Delete it.
+- [ ] Posts without an image show no category badge on the card: the badge is positioned over the image (`absolute bottom-4`), so without an image it ends up outside the card and gets clipped.

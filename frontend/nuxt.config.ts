@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig( {
     compatibilityDate: '2026-10-25',
     devtools: { enabled: true },
@@ -28,11 +30,10 @@ export default defineNuxtConfig( {
         }
     },
     css: [ '~/assets/css/main.css' ],
-    postcss: {
-        plugins: {
-            tailwindcss: {},
-            autoprefixer: {},
-        },
+    vite: {
+        plugins: [
+            tailwindcss(),
+        ],
     },
     image: {
         // The screen sizes predefined by `@nuxt/image`:

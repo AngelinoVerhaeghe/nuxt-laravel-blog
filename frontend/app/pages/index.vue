@@ -16,7 +16,7 @@ const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
             <div class="col-span-3">
                 <h3 class="text-2xl font-merriweather underline decoration-lime-400 font-semibold text-white">Recent Article</h3>
                 <article
-                    class="text-white bg-white border-l-[2px] border-lime-400 prose lg:prose-lg bg-opacity-10 backdrop-blur-xl rounded-tr-lg rounded-br-lg mt-10 p-4 lg:p-8">
+                    class="text-white bg-white/10 border-l-2 border-lime-400 prose lg:prose-lg backdrop-blur-xl rounded-tr-lg rounded-br-lg mt-10 p-4 lg:p-8">
                     <h4 class="text-xl font-semibold text-lime-400 uppercase">Laravel 10.23</h4>
                     <p>This week, the Laravel team released v10.23 with a new make:view Artisan command, support for PHPRedis 6.0, creating controller
                         test files while creating a model, and more.</p>
