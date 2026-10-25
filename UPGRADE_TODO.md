@@ -28,21 +28,22 @@ All backend packages are on their latest major. ✅
 | spatie/laravel-ignition | 2.3 | **2.12** |
 | pint / sail / guzzle | 1.13 / 1.25 / 7.8 | 1.32 / 1.69 / 7.16 |
 
-## Frontend (Nuxt): installed vs. latest
+## Frontend (Nuxt): before vs. now
 
-| Package | Locked | Latest | Notes |
-|---|---|---|---|
-| nuxt | 3.7.2 | **4.6** | major (new `app/` folder layout) |
-| vue | 3.3 | 3.5 | minor |
-| @nuxt/content | 2.8 | 3.16 | major rewrite, and **barely used** |
-| @nuxt/image | 1.0.0-rc.1 | 2.2 | major |
-| nuxt-icon | 0.5 | renamed to **@nuxt/icon** 2.6 | swap the package |
-| @nuxt/devtools | `latest` (0.8.3) | built into Nuxt 4 | remove |
-| tailwindcss | 3.3 | **4.3** | major (config moves into CSS) |
-| flowbite | 1.8 | 4.0 | **not used anywhere** in the templates |
-| axios | 1.5 | 1.20 | **not used**, the code uses `useFetch` |
-| @types/node | 18 | match Node 24 | |
-| @headlessui/vue, @heroicons/vue, typography, postcss, autoprefixer | | minor bumps | autoprefixer isn't needed with Tailwind 4 |
+| Package | Before (audit) | Now |
+|---|---|---|
+| nuxt | 3.7.2 | **4.6** |
+| vue | 3.3 | **3.5** |
+| @nuxt/content | 2.8 | **3.16** |
+| @nuxt/image | 1.0.0-rc.1 | **2.2** |
+| nuxt-icon | 0.5 | replaced by **@nuxt/icon 2.6** (+ `@iconify-json/uil`) |
+| @nuxt/devtools | `latest` (0.8.3) | removed (built into Nuxt 4) |
+| flowbite | 1.8 | removed (unused) |
+| axios | 1.5 | removed (unused) |
+| @types/node | 18 | **24** |
+| @headlessui/vue, @heroicons/vue | 1.7.16 / 2.0.18 | **1.7.23 / 2.2** |
+| tailwindcss | 3.3 | 3.3 → **4.3** in step 5 |
+| typography, postcss, autoprefixer | | step 5 (autoprefixer isn't needed with Tailwind 4) |
 
 ---
 
@@ -95,21 +96,22 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - The app has no own Livewire config, components or `wire:` markup, so the Livewire 4 breaking changes don't apply.
   - Removed `filament/upgrade` again after use.
 
-### 3. Frontend: Nuxt 3.7 → 4
-- [ ] First bump to the latest Nuxt 3.x and set `future: { compatibilityVersion: 4 }`, then move to `nuxt@^4`.
-- [ ] Move `pages/`, `components/`, `assets/`, `app.vue` into `app/`. Run `npx codemod@latest nuxt/4/migration-recipe` or move them by hand.
-- [ ] Remove `@nuxt/devtools` from devDependencies. It's pinned to `latest`, and Nuxt 4 already includes it.
-- [ ] Replace `nuxt-icon` with `@nuxt/icon`. `<Icon>` keeps working, so only the module name changes.
-- [ ] `@nuxt/image` → `^2`. Also fix the `alt="{{ post.title }}"` bug in `components/PostCardApi.vue:14` and `pages/blog/[slug].vue:16`. Vue doesn't interpolate inside attributes, so it has to be `:alt="post.title"`.
-- [ ] Replace `import.meta.env.VITE_API_BASE_URL` with `runtimeConfig.public.apiBase` (env var `NUXT_PUBLIC_API_BASE`) in the 3 pages that use `useFetch`.
-- [ ] `@types/node` → `^24`.
-
-### 4. Frontend: decide on the unused packages
-- [ ] **@nuxt/content:** the blog pulls its posts from the Laravel API. Content is only used by `content/blog/palia.md`, `components/content/Callout.vue` and `PostCardMarkdown.vue`, which isn't used anywhere.
-  - Either remove it, along with `backend/docs/Nuxt-Content.md`,
-  - or migrate to v3 (`content.config.ts` collections, `queryCollection`, highlight config moves to `content.build.markdown.highlight`).
-- [ ] **flowbite:** no Flowbite components or `data-*` attributes are used. Remove it, along with its plugin and `content` path in `tailwind.config.js`.
-- [ ] **axios:** not imported anywhere. Remove it.
+### 3 + 4. Frontend: Nuxt 3.7 → 4 and unused packages
+- [x] **Nuxt 4** (branch `feature/NLB/nuxt-4`). Now on Nuxt 4.6, Content 3, Image 2, Icon 2.
+  - Moved `app.vue`, `assets/`, `components/`, `pages/` into `app/` (`content/`, `public/`, `server/` stay at the root). Updated the Tailwind `content` paths.
+  - Removed `axios`, `flowbite` (+ its Tailwind plugin) and `@nuxt/devtools`; replaced `nuxt-icon` with `@nuxt/icon` and installed `@iconify-json/uil` so the footer icons render on the server too.
+  - API URL: `runtimeConfig.public.apiBase` (override with `NUXT_PUBLIC_API_BASE`) instead of `import.meta.env.VITE_API_BASE_URL`. CI no longer needs the env var.
+  - Nuxt 4 `pending` is no longer `true` on the server for `server: false` fetches, which caused hydration mismatches. The pages now check `status === 'idle' || status === 'pending'`, and `blog/[slug].vue` only renders the post once it's loaded.
+  - Bug fixes found on the way: `:alt="post.title"` instead of `alt="{{ post.title }}"`; no `<nuxt-img>` for posts without an image (it requested `/null`); `@headlessui/vue` 1.7.23 fixes the menu's hydration ID mismatch.
+- [x] **@nuxt/content 2 → 3** (kept, not removed).
+  - `content.config.ts` defines a `blog` collection (`content/blog/**/*.md`) with the frontmatter fields; highlighting moved to `content.build.markdown.highlight`; uses Node's built-in SQLite (`experimental.sqliteConnector: 'native'`).
+  - `PostCardMarkdown.vue`: `post._path` → `post.path`.
+  - `Callout.vue`: slot wrapper `<p>` → `<div>` (markdown text is already a `<p>`, and `<p>` in `<p>` broke hydration).
+  - `palia.md`: fixed the image path to `/images/blog/image.png`.
+  - Verified with a temporary page (not committed): list query, frontmatter, `nord` highlighting and the `::callout` component all render.
+- [ ] No page renders the markdown posts yet (the `/blog/[slug]` route uses the Laravel API). Add one if markdown posts should be public, e.g. `app/pages/articles/[...slug].vue` with `queryCollection('blog')`. Note: the collection paths are `/blog/...`, so a new route needs its own prefix or `.path()` mapping.
+- [ ] Update `backend/docs/Nuxt-Content.md`: it still shows the v2 API (`queryContent`, `ContentDoc`).
+- [ ] Add `"type": "module"` to `package.json` after step 5. Node warns about it now, but `tailwind.config.js` still uses `module.exports`.
 
 ### 5. Frontend: Tailwind 3 → 4
 - [ ] Run `npx @tailwindcss/upgrade`.

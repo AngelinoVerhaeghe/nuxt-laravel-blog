@@ -1,13 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./components/**/*.{js,vue,ts}",
-    "./layouts/**/*.vue",
-    "./pages/**/*.vue",
-    "./plugins/**/*.{js,ts}",
+    "./app/components/**/*.{js,vue,ts}",
+    "./app/layouts/**/*.vue",
+    "./app/pages/**/*.vue",
+    "./app/plugins/**/*.{js,ts}",
     "./nuxt.config.{js,ts}",
-    "./node_modules/flowbite/**/*.{js,ts}",
-    "./app.vue",
+    "./app/app.vue",
   ],
   theme: {
     fontFamily: {
@@ -16,5 +15,5 @@ module.exports = {
     },
     extend: {},
   },
-  plugins: [require('@tailwindcss/typography'), require('flowbite/plugin')],
+  plugins: [require('@tailwindcss/typography')],
 }

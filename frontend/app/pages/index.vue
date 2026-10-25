@@ -1,5 +1,6 @@
 <script setup>
-const { data: posts, pending } = await useFetch(() => `${ import.meta.env.VITE_API_BASE_URL }/posts`, {
+const { apiBase } = useRuntimeConfig().public;
+const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
     transform: (_posts) => _posts.data,
     server: false,
     headers: {
@@ -30,7 +31,7 @@ const { data: posts, pending } = await useFetch(() => `${ import.meta.env.VITE_A
             <aside class="col-span-2">
                 <h2 class="font-merriweather text-lime-400 text-2xl font-semibold">Latest Blog Posts</h2>
 
-                <div v-if="pending">
+                <div v-if="status === 'idle' || status === 'pending'">
                     Loading ...
                 </div>
                 <section class="grid sm:grid-cols-2 gap-10 mt-8">
