@@ -12,14 +12,14 @@ class ProductController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-		$products = Product::all();
+		$products = Product::published()->get();
 
 		return ProductResource::collection($products);
 	}
 
 	public function show(string $slug): JsonResponse|ProductResource
 	{
-		$product = Product::where('slug', $slug)->first();
+		$product = Product::published()->where('slug', $slug)->first();
 
 		if (!$product) {
 			return response()->json(['message' => 'Product not found'], 404);

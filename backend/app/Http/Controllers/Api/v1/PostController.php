@@ -16,7 +16,7 @@ class PostController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-	    $posts = Post::all();
+	    $posts = Post::published()->get();
 
 	    return PostResource::collection($posts);
     }
@@ -34,7 +34,7 @@ class PostController extends Controller
      */
     public function show(string $slug): PostResource|JsonResponse
     {
-	    $post = Post::where('slug', $slug)->first();
+	    $post = Post::published()->where('slug', $slug)->first();
 
 	    if (!$post) {
 		    return response()->json(['message' => 'Post not found'], 404);

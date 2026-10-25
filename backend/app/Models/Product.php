@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,5 +22,11 @@ class Product extends Model
 	public function categories(): BelongsToMany
 	{
 		return $this->belongsToMany(Category::class);
+	}
+
+	// Visible, and available from today or earlier ('Availability' in the admin panel)
+	public function scopePublished(Builder $query): void
+	{
+		$query->where('is_visible', true)->whereDate('published_at', '<=', now());
 	}
 }
