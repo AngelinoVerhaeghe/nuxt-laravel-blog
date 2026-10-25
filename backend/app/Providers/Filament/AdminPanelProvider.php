@@ -6,6 +6,7 @@ use Filament\Pages\Dashboard;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Filament\Auth\AcceptInvitation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -22,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 
@@ -34,6 +36,12 @@ class AdminPanelProvider extends PanelProvider
 			->id('dashboard')
 			->path('dashboard')
 			->login()
+			->routes(function (): void {
+				// Link from the invitation email (see User::sendInvitation())
+				Route::get('/invitation/accept', AcceptInvitation::class)
+					->middleware('signed')
+					->name('auth.invitation.accept');
+			})
 			->colors([
 				'primary' => Color::Lime,
 			])

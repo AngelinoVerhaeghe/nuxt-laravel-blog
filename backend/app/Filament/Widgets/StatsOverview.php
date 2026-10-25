@@ -11,6 +11,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverview extends BaseWidget
 {
+	public static function canView(): bool
+	{
+		// Shop data is for admins only
+		return auth()->user()?->hasRole('admin') ?? false;
+	}
+
 	protected static ?int $sort = 2;
 	protected ?string $pollingInterval = '15s';
 

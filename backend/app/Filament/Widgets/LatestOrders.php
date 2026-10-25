@@ -10,6 +10,12 @@ use Filament\Tables;
 
 class LatestOrders extends BaseWidget
 {
+	public static function canView(): bool
+	{
+		// Shop data is for admins only
+		return auth()->user()?->hasRole('admin') ?? false;
+	}
+
 	protected static ?int $sort = 4;
 
 	protected int | string | array $columnSpan = 'full';
