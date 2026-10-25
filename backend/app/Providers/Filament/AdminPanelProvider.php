@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
 			->id('dashboard')
 			->path('dashboard')
 			->login()
+			->profile()
 			->routes(function (): void {
 				// Link from the invitation email (see User::sendInvitation())
 				Route::get('/invitation/accept', AcceptInvitation::class)
@@ -57,17 +58,12 @@ class AdminPanelProvider extends PanelProvider
 				//->visible(fn(): bool => auth()->user()->can('view')) // View permission on authenticated user
 			])	// External links
 			->userMenuItems([
-				MenuItem::make()
-				->label('Settings')
-				->url('')
-				->icon('heroicon-o-cog-6-tooth'),
 				'logout' => MenuItem::make()->label('Log Out')// Customize Logout
 			]) // Set a navigation item specific to a user, this will show up in the right corner on name icon
 			//->breadcrumbs(false)	// Disable the breadcrumbs
 			//->topNavigation() // Top Navigation instead of sidebar
 			//->maxContentWidth('full') // Full width
-			->font('Dunbar')
-			->favicon('')
+			->favicon(asset('favicon.ico'))
 			->plugins([
 				SpotlightPlugin::make()
 			])

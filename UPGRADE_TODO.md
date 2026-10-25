@@ -91,7 +91,10 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - Smoke tests now also render all 11 create forms and the post edit page (41 tests).
   - Removed `filament/upgrade` again after use.
 - [x] Check the widgets: the dashboard smoke test renders all 4.
-- [ ] Check `AdminPanelProvider`: `->font('Dunbar')`, the empty `->favicon('')`, and the empty `Settings` `->url('')` user menu item.
+- [x] Check `AdminPanelProvider` (branch `feature/NLB/panel-cleanup`).
+  - `->font('Dunbar')`: Bunny Fonts has no Dunbar (the CSS request returned an error), so the panel fell back to a system font. Removed; Filament now uses its bundled Inter, served locally.
+  - `->favicon('')` → `->favicon(asset('favicon.ico'))`.
+  - Replaced the `Settings` user menu item (empty URL) with Filament's profile page (`->profile()`, "Edit profile" in the user menu: name, email, password). Smoke test added.
 - [x] **Filament 4 → 5** (branch `feature/NLB/filament-5`). Now on Filament 5.10 and Livewire 4.4.
   - `vendor/bin/filament-v5 app` found nothing to change. Bumped `filament/filament` and the media-library plugin to `^5`; the other plugins (roles-permissions 4, filament-excel 4, spotlight 2) already support 5.
   - The app has no own Livewire config, components or `wire:` markup, so the Livewire 4 breaking changes don't apply.
@@ -129,6 +132,6 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
 ### Follow-ups found during the upgrade (not caused by it)
 - [x] Blog post page: added `prose-invert`. The "Blogs" heading on `/blog` had the same problem and is now `text-white`.
 - [x] Mobile layout of the homepage: the two columns now stack below `lg` (`grid-cols-1 lg:grid-cols-5`).
-- [ ] `frontend/.npmrc` only contains pnpm settings (`shamefully-hoist`, `strict-peer-dependencies`), which npm warns about. Delete it (left for a manual change).
+- [x] `frontend/.npmrc` only contained pnpm settings (`shamefully-hoist`, `strict-peer-dependencies`), which npm warned about. Deleted (branch `feature/NLB/panel-cleanup`).
 - [x] Posts without an image: the category badge is now shown at the top of the card instead of being clipped.
 - [x] **Security:** `User::canAccessPanel()` always returned `true` and `POST /register` was public, so anyone could register and open the admin panel. Fixed in branch `feature/NLB/user-invites`: invitation-only users, `admin`/`editor` roles, register route removed (see `backend/README.md`).
