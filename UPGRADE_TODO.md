@@ -73,7 +73,11 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
   - Sanctum 4: migration was already published; renamed the config keys to `validate_csrf_token` + `authenticate_session`.
   - Medialibrary 11: no changes needed (no custom conversions). Laravel 12 no longer needs `doctrine/dbal`.
   - Kept the Laravel 10 app structure (still supported).
-- [ ] Optional: switch to the slim app structure. This means removing `app/Http/Kernel.php`, `app/Console/Kernel.php`, `Exceptions/Handler.php`, the 9 default middleware classes and most of the providers, and moving their config into `bootstrap/app.php`.
+- [x] Slim app structure (branch `feature/NLB/slim-app-structure`). `bootstrap/app.php` now uses `Application::configure()`; providers are listed in `bootstrap/providers.php`.
+  - Removed `app/Http/Kernel.php`, `app/Console/Kernel.php`, `Exceptions/Handler.php`, 9 of the 10 middleware classes, `Auth`/`Event`/`Broadcast`/`RouteServiceProvider`, `routes/channels.php` (broadcasting was off) and `tests/CreatesApplication.php`. They only repeated framework defaults.
+  - Kept: the JSON `EnsureEmailIsVerified` (alias `verified`). Moved the admin-only policies, the password reset URL and the `api` rate limiter into `AppServiceProvider`; Sanctum stateful API, `throttle:api` and the `/dashboard` redirect for logged-in users into `bootstrap/app.php`. `RouteServiceProvider::HOME` replaced with `'/dashboard'`. `config/sanctum.php` points at the framework middleware; `config/app.php` no longer lists providers and aliases.
+  - `public/index.php` and `artisan` use `handleRequest()` / `handleCommand()`.
+  - Checked with a before/after diff of `route:list` and the HTTP kernel's middleware: same 68 routes and 182 commands; middleware only changed from the removed subclasses to their framework parents, plus the two global middleware Laravel 13 adds by default (`ValidatePathEncoding`, `InvokeDeferredCallbacks`).
 - [x] Switch to PHP 8.5: done in step 2 (branch `feature/NLB-0/filament-4`).
 - [x] **L12 → 13** (branch `feature/NLB/laravel-13`). Now on Laravel 13.38, Tinker 3, PHPUnit 13 (Symfony 8).
   - CSRF middleware renamed to `PreventRequestForgery` (it now also checks the `Sec-Fetch-Site` header): `App\Http\Middleware\VerifyCsrfToken` now extends it, and the Filament panel middleware uses it.
