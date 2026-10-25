@@ -1,9 +1,5 @@
 <script setup>
-const { apiBase } = useRuntimeConfig().public;
-const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
-    transform: (_posts) => _posts.data,
-    server: false
-})
+const { posts, status } = await useBlogPosts();
 </script>
 
 <template>
@@ -13,6 +9,6 @@ const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
         <div v-if="status === 'idle' || status === 'pending'">
             <p>Loading...</p>
         </div>
-        <PostCardApi v-for="post in posts" :key="post.id" :post="post"/>
+        <PostCard v-for="post in posts" :key="post.id" :post="post"/>
     </section>
 </template>

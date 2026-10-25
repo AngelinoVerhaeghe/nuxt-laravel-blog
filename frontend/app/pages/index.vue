@@ -1,13 +1,5 @@
 <script setup>
-const { apiBase } = useRuntimeConfig().public;
-const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
-    transform: (_posts) => _posts.data,
-    server: false,
-    headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-    }
-})
+const { posts, status } = await useBlogPosts();
 </script>
 
 <template>
@@ -35,7 +27,7 @@ const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
                     Loading ...
                 </div>
                 <section class="grid sm:grid-cols-2 gap-10 mt-8">
-                    <PostCardApi v-for="post in posts" :key="post.id" :post="post"/>
+                    <PostCard v-for="post in posts" :key="post.id" :post="post"/>
                 </section>
             </aside>
         </div>
