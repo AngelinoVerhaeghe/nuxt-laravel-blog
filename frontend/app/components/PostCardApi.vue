@@ -11,7 +11,7 @@ defineProps({
     <div class="bg-white rounded-md shadow-md overflow-hidden">
         <div class="relative">
             <nuxt-link :to="`/blog/${post.slug}`">
-                <nuxt-img class="w-full h-48 object-cover" :src="post.imageUrl" alt="{{ post.title }}"/>
+                <nuxt-img v-if="post.imageUrl" class="w-full h-48 object-cover" :src="post.imageUrl" :alt="post.title"/>
             </nuxt-link>
             <small class="absolute left-4 bottom-4 text-xs text-amber-900 font-bold uppercase px-3 py-1 rounded-full bg-amber-300">{{ post.category.name }}</small>
         </div>

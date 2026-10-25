@@ -11,7 +11,7 @@ author: Sonic
 
 A COZY WORLD MADE FOR YOU
 
-![image.png](..%2F..%2Fpublic%2Fimages%2Fblog%2Fimage.png)
+![image.png](/images/blog/image.png)
 
 ```bash
 Play Open Beta for Free!
