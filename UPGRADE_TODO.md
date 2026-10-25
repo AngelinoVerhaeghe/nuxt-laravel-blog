@@ -131,4 +131,4 @@ Laravel 11 was skipped: Composer 2.9 blocks every 11.x release because of securi
 - [x] Mobile layout of the homepage: the two columns now stack below `lg` (`grid-cols-1 lg:grid-cols-5`).
 - [ ] `frontend/.npmrc` only contains pnpm settings (`shamefully-hoist`, `strict-peer-dependencies`), which npm warns about. Delete it (left for a manual change).
 - [x] Posts without an image: the category badge is now shown at the top of the card instead of being clipped.
-- [ ] **Security:** `User::canAccessPanel()` always returns `true`, and the Breeze API route `POST /register` is still active. Anyone who registers can open the admin panel. Restrict the panel (e.g. by role or email domain) and/or remove the register route.
+- [x] **Security:** `User::canAccessPanel()` always returned `true` and `POST /register` was public, so anyone could register and open the admin panel. Fixed in branch `feature/NLB/user-invites`: invitation-only users, `admin`/`editor` roles, register route removed (see `backend/README.md`).

@@ -2,8 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Brand;
+use App\Models\Customer;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
+use App\Policies\AdminOnlyPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +21,14 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        // Only admins can manage users, roles and the shop; editors get the blog content
+        User::class => AdminOnlyPolicy::class,
+        Role::class => AdminOnlyPolicy::class,
+        Permission::class => AdminOnlyPolicy::class,
+        Product::class => AdminOnlyPolicy::class,
+        Brand::class => AdminOnlyPolicy::class,
+        Customer::class => AdminOnlyPolicy::class,
+        Order::class => AdminOnlyPolicy::class,
     ];
 
     /**

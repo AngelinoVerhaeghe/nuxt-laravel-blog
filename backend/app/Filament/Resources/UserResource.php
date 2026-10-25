@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
@@ -20,6 +21,7 @@ use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -43,8 +45,17 @@ class UserResource extends Resource
 							->maxLength(255)
 							->helperText('Volledige naam invullen')
 							->required(),
-						TextInput::make('email')->email()->required(),
-						Select::make('roles')->multiple()->relationship('roles', 'name')
+						TextInput::make('email')
+							->email()
+							->required()
+							->unique(ignoreRecord: true)
+							->helperText(fn( string $operation ): ?string => $operation === 'create' ? 'An invitation to set a password is sent to this address.' : null),
+						Select::make('roles')
+							->multiple()
+							->relationship('roles', 'name')
+							->preload()
+							->required()
+							->helperText('admin: everything. editor: blog content (posts, articles, tags, categories).'),
 					])
 			]);
 	}
@@ -59,6 +70,14 @@ class UserResource extends Resource
 					->searchable(),
 				TextColumn::make('email')
 					->searchable(),
+				TextColumn::make('roles.name')
+					->label(__('Roles'))
+					->badge(),
+				TextColumn::make('email_verified_at')
+					->label(__('Status'))
+					->badge()
+					->state(fn( User $record ): string => $record->hasPendingInvitation() ? 'Invited' : 'Active')
+					->color(fn( string $state ): string => $state === 'Active' ? 'success' : 'warning'),
 			])
 			->filters([
 				//
@@ -67,6 +86,19 @@ class UserResource extends Resource
 				ActionGroup::make([
 					ViewAction::make(),
 					EditAction::make(),
+					Action::make('resendInvitation')
+						->label(__('Resend invitation'))
+						->icon('heroicon-o-envelope')
+						->visible(fn( User $record ): bool => $record->hasPendingInvitation())
+						->requiresConfirmation()
+						->action(function ( User $record ): void {
+							$record->sendInvitation();
+
+							Notification::make()
+								->success()
+								->title(__('Invitation sent to :email', ['email' => $record->email]))
+								->send();
+						}),
 					DeleteAction::make()
 				])
 			])

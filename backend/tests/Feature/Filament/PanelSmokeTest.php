@@ -25,7 +25,7 @@ class PanelSmokeTest extends TestCase
 
     public function test_the_dashboard_renders(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->role('admin')->create())
             ->get('/dashboard')
             ->assertOk();
     }
@@ -50,7 +50,7 @@ class PanelSmokeTest extends TestCase
     #[DataProvider('resourcePaths')]
     public function test_resource_index_pages_render(string $path): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->role('admin')->create())
             ->get($path)
             ->assertOk();
     }
@@ -58,14 +58,14 @@ class PanelSmokeTest extends TestCase
     #[DataProvider('resourcePaths')]
     public function test_resource_create_pages_render(string $path): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->role('admin')->create())
             ->get($path.'/create')
             ->assertOk();
     }
 
     public function test_the_post_edit_page_renders(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->role('admin')->create();
         $category = Category::create(['name' => 'News', 'slug' => 'news']);
         $post = Post::create([
             'user_id' => $user->id,

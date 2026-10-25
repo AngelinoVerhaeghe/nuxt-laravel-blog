@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 class OrdersChart extends ChartWidget
 {
+	public static function canView(): bool
+	{
+		// Shop data is for admins only
+		return auth()->user()?->hasRole('admin') ?? false;
+	}
+
 	protected static ?int $sort = 3;
 
 	protected ?string $heading = 'Chart';

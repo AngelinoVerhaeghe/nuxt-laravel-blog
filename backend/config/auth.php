@@ -97,6 +97,14 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
+        // Invitation links for new admin panel users (48 hours)
+        'invites' => [
+            'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 2880,
+            'throttle' => 0,
+        ],
     ],
 
     /*

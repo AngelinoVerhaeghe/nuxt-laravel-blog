@@ -8,6 +8,12 @@ use Filament\Widgets\ChartWidget;
 
 class ProductsChart extends ChartWidget
 {
+	public static function canView(): bool
+	{
+		// Shop data is for admins only
+		return auth()->user()?->hasRole('admin') ?? false;
+	}
+
     protected ?string $heading = 'Chart';
 
 	protected static ?int $sort = 3;
