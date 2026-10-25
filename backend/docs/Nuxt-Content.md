@@ -1,75 +1,91 @@
-## Nuxt Content
+## Nuxt Content (v3)
 
-This in the [...slug] file to show the content in the markdown file
+Markdown posts live in `frontend/content/blog/*.md`. They belong to the `blog` collection defined in `frontend/content.config.ts`:
 
-```javascript
-const { path } = useRoute();
+```typescript
+import { defineCollection, defineContentConfig, z } from '@nuxt/content'
 
-const { data } = await useAsyncData(`content-${ path }`, () => {
- return queryContent()
-     .where({ _path: path })
-     .findOne()
-})
+export default defineContentConfig( {
+    collections: {
+        blog: defineCollection( {
+            type: 'page',
+            source: 'blog/**/*.md',
+            schema: z.object( {
+                createAt: z.string(),
+                originalUrl: z.string(),
+                category: z.string(),
+                author: z.string(),
+            } ),
+        } ),
+    },
+} );
 ```
 
-This to render the template
+Add a field to `schema` before using it in the frontmatter of a post. `title` and `description` are built in for `page` collections.
 
-```vue
-<article class="mx-auto max-w-7xl text-gray-600 bg-amber-50 grow items-start w-full prose p-2 sm:p-6 lg:p-8">
-    <ContentRenderer :value="data"/>
-</article>
-```
+### Showing one post
 
-
-Make a component to render the blogpost
-
-```vue
-<PostCardMarkdown :posts="posts" />
-```
-and pass the post object, in pages directory /blog
-
-```javascript
-const { data: posts } = await useAsyncData('posts', () => {
-     return queryContent('/blog').find()
-});
-```
-
-In the Component for example `PostCardMarkdown` u place this:
+A post's `path` is its file path without the extension, e.g. `content/blog/palia.md` → `/blog/palia`. Note that `/blog/[slug]` is already used for the API posts, so a markdown page needs its own route, for example `app/pages/articles/[...slug].vue`:
 
 ```vue
 <script setup>
-const props = defineProps([ 'posts' ]);
+const route = useRoute();
+
+const { data: post } = await useAsyncData( `article-${ route.path }`, () => {
+    return queryCollection( 'blog' )
+        .path( route.path.replace( '/articles', '/blog' ) )
+        .first()
+} )
 </script>
 
 <template>
-    <div v-for="post in props.posts" :key="post.id"
-         class="bg-white rounded-md shadow-md overflow-hidden">
-        <div class="relative">
-            <nuxt-link :to="post._path">
-                <img class="w-full h-48 object-cover" :src="`/images/blog/${post.originalUrl}`" alt="{{ post.title }}"/>
-            </nuxt-link>
-            <small class="absolute left-4 bottom-4 text-xs text-amber-900 font-bold uppercase px-3 py-1 rounded-full bg-amber-300">{{ post.category }}</small>
-        </div>
-
-        <div class="p-6">
-            <small class="flex justify-end text-sm text-gray-500">{{ post.createAt }}</small>
-            <h5 class="font-semibold text-xl underline decoration-amber-400">{{ post.title }}</h5>
-            <p class="text-xs md:text-base py-4">{{ post.description }}</p>
-            <nuxt-link :to="post._path" class="inline-block rounded bg-blue-500 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white">
-                Read More
-            </nuxt-link>
-        </div>
-    </div>
+    <article class="mx-auto max-w-7xl prose prose-invert p-2 sm:p-6 lg:p-8">
+        <ContentRenderer v-if="post" :value="post"/>
+    </article>
 </template>
 ```
-Let say u want to show the tree latest blogposts on the homepage, put this on the page to fetch them:
 
-```javascript
-const { data: posts } = await useAsyncData('latest-posts', () => {
-     return queryContent('/blog')
-         .sort({ data: 1 })
-         .limit(3)
-         .find()
- })
+### Listing posts
+
+Pass the posts to the `PostCardMarkdown` component:
+
+```vue
+<script setup>
+const { data: posts } = await useAsyncData( 'posts', () => {
+    return queryCollection( 'blog' ).all()
+} );
+</script>
+
+<template>
+    <PostCardMarkdown :posts="posts"/>
+</template>
 ```
 
+The component links to `post.path` (v2 used `post._path`). If the page lives under another route (like `/articles`), adjust the links there.
+
+For the three latest posts on the homepage:
+
+```javascript
+const { data: posts } = await useAsyncData( 'latest-posts', () => {
+    return queryCollection( 'blog' )
+        .order( 'createAt', 'DESC' )
+        .limit( 3 )
+        .all()
+} )
+```
+
+### Components in markdown
+
+Vue components in `frontend/app/components/content/` can be used in markdown with MDC syntax, for example the `Callout` component:
+
+```markdown
+::callout{title="Explore a Vibrant New World"}
+From sprawling flower fields to hilly forests and rocky beaches.
+::
+```
+
+Don't wrap `<slot/>` in a `<p>` in these components: the markdown text is already a paragraph, and a `<p>` inside a `<p>` breaks hydration.
+
+### Code highlighting
+
+Configured in `frontend/nuxt.config.ts` under `content.build.markdown.highlight` (theme `nord`).

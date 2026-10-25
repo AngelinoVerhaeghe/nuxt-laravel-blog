@@ -12,8 +12,8 @@ const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
 
 <template>
     <section>
-        <div class="grid grid-cols-5 gap-10">
-            <div class="col-span-3">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+            <div class="lg:col-span-3">
                 <h3 class="text-2xl font-merriweather underline decoration-lime-400 font-semibold text-white">Recent Article</h3>
                 <article
                     class="text-white bg-white/10 border-l-2 border-lime-400 prose lg:prose-lg backdrop-blur-xl rounded-tr-lg rounded-br-lg mt-10 p-4 lg:p-8">
@@ -28,7 +28,7 @@ const { data: posts, status } = await useFetch(() => `${ apiBase }/posts`, {
                     <p>php artisan make:view users.index</p>
                 </article>
             </div>
-            <aside class="col-span-2">
+            <aside class="lg:col-span-2">
                 <h2 class="font-merriweather text-lime-400 text-2xl font-semibold">Latest Blog Posts</h2>
 
                 <div v-if="status === 'idle' || status === 'pending'">

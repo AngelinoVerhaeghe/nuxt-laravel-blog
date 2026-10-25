@@ -13,7 +13,7 @@ defineProps({
             <nuxt-link :to="`/blog/${post.slug}`">
                 <nuxt-img v-if="post.imageUrl" class="w-full h-48 object-cover" :src="post.imageUrl" :alt="post.title"/>
             </nuxt-link>
-            <small class="absolute left-4 bottom-4 text-xs text-amber-900 font-bold uppercase px-3 py-1 rounded-full bg-amber-300">{{ post.category.name }}</small>
+            <small :class="post.imageUrl ? 'absolute left-4 bottom-4' : 'inline-block ml-6 mt-6'" class="text-xs text-amber-900 font-bold uppercase px-3 py-1 rounded-full bg-amber-300">{{ post.category.name }}</small>
         </div>
 
         <div class="p-6">
