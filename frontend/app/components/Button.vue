@@ -16,5 +16,5 @@ const props = defineProps({
 
 </script>
 <template>
-    <a :href="props.route" class="bg-amber-600 text-amber-100 hover:bg-amber-800 duration-200 rounded-lg shadow-md px-4 py-2">{{ props.text }}</a>
+    <a :href="props.route" class="inline-block rounded-full bg-ink px-7 py-3 text-sm font-semibold tracking-wide text-cream shadow-md shadow-lavender-deep/20 hover:bg-lavender-deep duration-200">{{ props.text }}</a>
 </template>
