@@ -32,8 +32,7 @@ class StatsOverview extends BaseWidget
 	{
 		$products = Product::count();
 		$publishedProducts = Product::published()->count();
-		// The status column stores lowercase values ('pending'), the enum has 'Pending'
-		$pendingOrders = Order::where('status', strtolower(OrderStatusEnum::PENDING->value))->count();
+		$pendingOrders = Order::where('status', OrderStatusEnum::PENDING)->count();
 
 		return [
 			$this->customersStat(),

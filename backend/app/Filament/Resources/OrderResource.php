@@ -43,15 +43,16 @@ class OrderResource extends Resource
 
 	protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
+	// Number of orders being processed
 	public static function getNavigationBadge(): ?string
 	{
-		return static::getModel()::where('status', '=', OrderStatusEnum::PROCESSING)->count();
+		return static::getModel()::where('status', OrderStatusEnum::PROCESSING)->count();
 	}
 
-	// Color the badge, let say if processing order take more than 10 change badge color
+	// Turns orange once more than 10 orders are being processed
 	public static function getNavigationBadgeColor(): string|array|null
 	{
-		return static::getModel()::where('status', '=', 'processing')->count() > 10 ? 'warning' : 'primary';
+		return static::getNavigationBadge() > 10 ? 'warning' : 'primary';
 	}
 
 	public static function form( Schema $schema ): Schema
@@ -75,13 +76,10 @@ class OrderResource extends Resource
 							->dehydrated()
 							->numeric()
 							->required(),
-							Select::make('type')
-								->options([
-									'Pending' => OrderStatusEnum::PENDING->value,
-									'Processing' => OrderStatusEnum::PROCESSING->value,
-									'Completed' => OrderStatusEnum::COMPLETED->value,
-									'Declined' => OrderStatusEnum::DECLINED->value,
-								])->required(),
+							Select::make('status')
+								->options(OrderStatusEnum::class)
+								->default(OrderStatusEnum::PENDING)
+								->required(),
 							MarkdownEditor::make('notes')
 								->columnSpanFull()
 						])->columns(2),
@@ -131,6 +129,7 @@ class OrderResource extends Resource
 					->sortable()
 					->toggleable(),
 				TextColumn::make('status')
+					->badge()
 					->searchable()
 					->sortable(),
 				TextColumn::make('created_at')

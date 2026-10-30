@@ -36,6 +36,7 @@ class LatestOrders extends BaseWidget
 					->sortable()
 					->toggleable(),
 				TextColumn::make('status')
+					->badge()
 					->searchable()
 					->sortable(),
 				TextColumn::make('created_at')

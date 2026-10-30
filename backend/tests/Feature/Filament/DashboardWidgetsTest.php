@@ -126,7 +126,7 @@ class DashboardWidgetsTest extends TestCase
         return Order::forceCreate([
             'customer_id' => $customer->id,
             'number' => $number,
-            'status' => strtolower($status->value), // the column only accepts lowercase
+            'status' => $status,
             'notes' => '',
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,10 @@ class Order extends Model
     use HasFactory, SoftDeletes;
 
 	protected $fillable = ['customer_id', 'number', 'total_price', 'status', 'shipping_price', 'notes'];
+
+	protected $casts = [
+		'status' => OrderStatusEnum::class,
+	];
 
 	public function customer(): BelongsTo
 	{
