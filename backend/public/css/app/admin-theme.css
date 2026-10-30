@@ -1,0 +1,363 @@
+/*
+  Pastel admin theme, matching the frontend (frontend/app/assets/css/main.css).
+  Loaded after Filament's own styles; publish changes with `php artisan filament:assets`.
+*/
+@import url('https://fonts.bunny.net/css?family=fraunces:400,500,600');
+
+:root {
+	--nlb-cream: #fbf7f2;
+	--nlb-ink: #2f2a3b;
+	--nlb-lavender: #e9e0f8;
+	--nlb-peach: #fde3d3;
+	--nlb-rose: #f9dde6;
+	--nlb-mint: #d9f0e5;
+
+	--nlb-glass: rgb(255 255 255 / 0.62);
+	--nlb-glass-strong: rgb(255 255 255 / 0.86);
+	--nlb-glass-edge: rgb(255 255 255 / 0.75);
+	--nlb-shadow: 0 0 0 1px rgb(47 42 59 / 0.06), 0 16px 40px -18px rgb(110 88 168 / 0.28);
+
+	/* Rounder corners everywhere Filament uses these radii */
+	--radius-lg: 0.875rem;
+	--radius-xl: 1.375rem;
+}
+
+.dark {
+	--nlb-glass: rgb(255 255 255 / 0.04);
+	--nlb-glass-strong: rgb(30 27 38 / 0.92);
+	--nlb-glass-edge: rgb(255 255 255 / 0.08);
+	--nlb-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 16px 40px -18px rgb(0 0 0 / 0.6);
+}
+
+/* Background: soft pastel mesh */
+.fi-body {
+	background-color: var(--nlb-cream);
+	background-image:
+		radial-gradient(55rem 38rem at 0% 0%, rgb(233 224 248 / 0.95), transparent 60%),
+		radial-gradient(48rem 34rem at 100% 0%, rgb(253 227 211 / 0.8), transparent 60%),
+		radial-gradient(52rem 38rem at 100% 100%, rgb(217 240 229 / 0.85), transparent 60%),
+		radial-gradient(44rem 34rem at 0% 100%, rgb(249 221 230 / 0.75), transparent 60%);
+	background-attachment: fixed;
+	color: var(--nlb-ink);
+}
+
+.dark .fi-body {
+	background-color: var(--gray-950);
+	background-image:
+		radial-gradient(55rem 38rem at 0% 0%, rgb(110 88 168 / 0.28), transparent 60%),
+		radial-gradient(48rem 34rem at 100% 0%, rgb(190 120 100 / 0.14), transparent 60%),
+		radial-gradient(52rem 38rem at 100% 100%, rgb(61 127 99 / 0.2), transparent 60%),
+		radial-gradient(44rem 34rem at 0% 100%, rgb(190 90 130 / 0.14), transparent 60%);
+	color: var(--gray-100);
+}
+
+/* Frosted glass surfaces */
+.fi-topbar,
+.fi-sidebar,
+.fi-section:not(.fi-section-not-contained),
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-simple-main {
+	background-color: var(--nlb-glass);
+	backdrop-filter: blur(20px) saturate(1.5);
+	-webkit-backdrop-filter: blur(20px) saturate(1.5);
+	box-shadow: inset 0 1px 0 var(--nlb-glass-edge), var(--nlb-shadow);
+}
+
+.fi-dropdown-panel,
+.fi-modal-window {
+	background-color: var(--nlb-glass-strong);
+	backdrop-filter: blur(24px) saturate(1.5);
+	-webkit-backdrop-filter: blur(24px) saturate(1.5);
+}
+
+.fi-topbar {
+	background-color: rgb(255 255 255 / 0.45);
+	box-shadow: 0 1px 0 var(--nlb-glass-edge);
+}
+
+.dark .fi-topbar {
+	background-color: rgb(20 18 26 / 0.5);
+}
+
+/*
+  Window in a window (desktop): the top bar and sidebar sit on the page background as a frame,
+  and the page content scrolls inside a rounded floating panel. On mobile the sidebar slides
+  over the page and the content scrolls normally.
+*/
+@media (min-width: 64rem) {
+	.fi-topbar,
+	.dark .fi-topbar,
+	.fi-sidebar {
+		background-color: transparent;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		box-shadow: none;
+	}
+
+	.fi-body {
+		height: 100dvh;
+		overflow: hidden;
+	}
+
+	.fi-layout {
+		height: calc(100dvh - var(--topbar-height));
+	}
+
+	.fi-main-ctn {
+		height: calc(100dvh - var(--topbar-height) - 0.75rem);
+		min-height: 0;
+		margin-inline-end: 0.75rem;
+		overflow-y: auto;
+		border-radius: 1.75rem;
+		/* No backdrop-filter here: it would trap Filament's modal overlays inside the window */
+		background-color: rgb(255 255 255 / 0.5);
+		box-shadow:
+			inset 0 1px 0 var(--nlb-glass-edge),
+			0 0 0 1px rgb(47 42 59 / 0.07),
+			0 24px 60px -24px rgb(110 88 168 / 0.35);
+	}
+
+	/* Window scrollbar: kept clear of the rounded corners and inset from the edge */
+	.fi-main-ctn::-webkit-scrollbar {
+		width: 14px;
+	}
+
+	.fi-main-ctn::-webkit-scrollbar-track {
+		margin-block: 1.75rem;
+	}
+
+	.fi-main-ctn::-webkit-scrollbar-thumb {
+		border: 4px solid transparent;
+		border-right-width: 6px;
+		background-clip: padding-box;
+	}
+
+	.dark .fi-main-ctn {
+		background-color: rgb(255 255 255 / 0.03);
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 0.06),
+			0 0 0 1px rgb(255 255 255 / 0.07),
+			0 24px 60px -24px rgb(0 0 0 / 0.7);
+	}
+
+	/* Cards inside the window: a bit more opaque, so they lift off it */
+	.fi-section:not(.fi-section-not-contained),
+	.fi-ta-ctn,
+	.fi-wi-stats-overview-stat {
+		background-color: rgb(255 255 255 / 0.72);
+	}
+
+	.dark .fi-section:not(.fi-section-not-contained),
+	.dark .fi-ta-ctn,
+	.dark .fi-wi-stats-overview-stat {
+		background-color: rgb(255 255 255 / 0.05);
+	}
+}
+
+.fi-simple-main {
+	border-radius: 2rem;
+}
+
+/* Sidebar: compact pill-shaped items, active item in a lavender-to-rose wash */
+.fi-sidebar-nav {
+	padding-inline: calc(var(--spacing) * 4);
+	padding-block: calc(var(--spacing) * 5);
+}
+
+.fi-sidebar-nav-groups {
+	row-gap: calc(var(--spacing) * 4);
+}
+
+.fi-sidebar-group,
+.fi-sidebar-group-items {
+	row-gap: 2px;
+}
+
+.fi-sidebar-group-btn {
+	padding-block: calc(var(--spacing) * 1);
+}
+
+.fi-sidebar-item-btn {
+	border-radius: 999px;
+	column-gap: calc(var(--spacing) * 2.5);
+	padding-block: calc(var(--spacing) * 1.5);
+	padding-inline: calc(var(--spacing) * 3);
+}
+
+.fi-sidebar-item-btn > .fi-icon {
+	width: 1.125rem;
+	height: 1.125rem;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+	background-image: linear-gradient(100deg, var(--nlb-lavender), var(--nlb-rose));
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 6px 16px -8px rgb(110 88 168 / 0.45);
+}
+
+.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+	background-image: linear-gradient(100deg, rgb(110 88 168 / 0.35), rgb(190 90 130 / 0.2));
+	box-shadow: none;
+}
+
+/*
+  Scrollbars: a thin lavender pill instead of the OS default, without arrow buttons.
+  Chrome ignores the ::-webkit-scrollbar rules (and shows arrows) once `scrollbar-color`
+  is set, so the standard properties are only used where those rules don't exist (Firefox).
+*/
+:root {
+	--nlb-scrollbar: rgb(110 88 168 / 0.22);
+	--nlb-scrollbar-hover: rgb(110 88 168 / 0.5);
+}
+
+.dark {
+	--nlb-scrollbar: rgb(255 255 255 / 0.12);
+	--nlb-scrollbar-hover: rgb(255 255 255 / 0.3);
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+::-webkit-scrollbar-button {
+	display: none;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 999px;
+	background: var(--nlb-scrollbar);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--nlb-scrollbar-hover);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+	html {
+		scrollbar-width: thin;
+		scrollbar-color: var(--nlb-scrollbar) transparent;
+	}
+}
+
+/* Sidebar menu: items fade out at the top and bottom edges while scrolling */
+.fi-sidebar-nav {
+	mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
+	-webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
+}
+
+.fi-sidebar-group-label {
+	font-size: 0.7rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+/* Buttons: pills; primary ones get a gradient and a soft glow */
+.fi-btn:not(.fi-btn-group .fi-btn) {
+	border-radius: 999px;
+	padding-inline: calc(var(--spacing) * 4);
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined) {
+	background-image: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 8px 20px -8px rgb(110 88 168 / 0.6);
+	transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):hover {
+	filter: brightness(1.06);
+	transform: translateY(-1px);
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 12px 24px -8px rgb(110 88 168 / 0.7);
+}
+
+/* Display type: Fraunces for headings and big numbers */
+.fi-header-heading,
+.fi-simple-header-heading,
+.fi-section-header-heading,
+.fi-wi-stats-overview-stat-value {
+	font-family: Fraunces, Georgia, serif;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+}
+
+.fi-header-heading {
+	font-size: clamp(2rem, 1.5rem + 1.5vw, 2.75rem);
+}
+
+.fi-wi-stats-overview-stat-value {
+	font-size: 2.5rem;
+	line-height: 1.1;
+}
+
+.fi-wi-stats-overview-stat-label {
+	font-size: 0.75rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+/* Inputs: softer, with a lavender focus glow */
+.fi-input-wrp:focus-within {
+	box-shadow: 0 0 0 4px rgb(110 88 168 / 0.15), 0 0 0 1.5px var(--primary-600);
+}
+
+/*
+  Select dropdowns: a frosted panel with rounded, lavender-highlighted options.
+  Filament marks the keyboard/hover-highlighted option with .fi-selected and the chosen one
+  with aria-selected="true".
+*/
+.fi-select-input .fi-dropdown-panel {
+	padding: 0.375rem;
+	border-radius: 1rem;
+	box-shadow: 0 0 0 1px rgb(47 42 59 / 0.06), 0 20px 48px -16px rgb(110 88 168 / 0.35);
+}
+
+.dark .fi-select-input .fi-dropdown-panel {
+	box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 20px 48px -16px rgb(0 0 0 / 0.7);
+}
+
+.fi-select-input-option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	border-radius: 0.625rem;
+	padding: 0.5rem 0.75rem;
+	transition: background-color 120ms ease, color 120ms ease;
+}
+
+.fi-select-input-option:hover,
+.fi-select-input-option.fi-selected {
+	background-color: var(--nlb-lavender);
+	color: var(--primary-700);
+}
+
+.dark .fi-select-input-option:hover,
+.dark .fi-select-input-option.fi-selected {
+	background-color: rgb(110 88 168 / 0.3);
+	color: var(--primary-200);
+}
+
+.fi-select-input-option[aria-selected='true'] {
+	font-weight: 600;
+	color: var(--primary-700);
+}
+
+.dark .fi-select-input-option[aria-selected='true'] {
+	color: var(--primary-300);
+}
+
+/* Check mark next to the chosen option */
+.fi-select-input-option[aria-selected='true']::after {
+	content: '';
+	flex-shrink: 0;
+	width: 1rem;
+	height: 1rem;
+	background-color: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / contain no-repeat;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / contain no-repeat;
+}

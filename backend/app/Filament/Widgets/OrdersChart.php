@@ -15,25 +15,38 @@ class OrdersChart extends ChartWidget
 		return auth()->user()?->hasRole('admin') ?? false;
 	}
 
-	protected static ?int $sort = 3;
+	protected static ?int $sort = 4;
 
-	protected ?string $heading = 'Chart';
+	protected ?string $heading = 'Orders by status';
+
+	protected ?string $description = 'All time';
 
 	protected function getData(): array
 	{
-		$data = Order::select('status', DB::raw('count(*) as count'))
+		// The status column stores lowercase values ('pending'), the enum has 'Pending'
+		$counts = Order::select('status', DB::raw('count(*) as count'))
 			->groupBy('status')
 			->pluck('count', 'status')
-			->toArray();
+			->mapWithKeys(fn ($count, string $status) => [ strtolower($status) => $count ]);
+
+		// One bar per status, in enum order, so a status without orders shows as 0
+		$statuses = collect(OrderStatusEnum::cases());
 
 		return [
 			'datasets' => [
 				[
 					'label' => 'Orders',
-					'data' => array_values($data)
-				]
+					'data' => $statuses->map(fn (OrderStatusEnum $status) => (int) $counts->get(strtolower($status->value), 0))->all(),
+				],
 			],
-			'labels' => OrderStatusEnum::cases()
+			'labels' => $statuses->map(fn (OrderStatusEnum $status) => $status->value)->all(),
+		];
+	}
+
+	protected function getOptions(): array
+	{
+		return [
+			'scales' => [ 'y' => [ 'beginAtZero' => true, 'ticks' => [ 'precision' => 0 ] ] ],
 		];
 	}
 
