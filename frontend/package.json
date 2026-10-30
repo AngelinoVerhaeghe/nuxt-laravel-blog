@@ -7,18 +7,21 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck"
   },
   "devDependencies": {
     "@iconify-json/uil": "^1.2.3",
     "@nuxt/content": "^3.16.2",
-    "@nuxt/icon": "^2.6.1",
+    "@nuxt/icon": "^2.6.2",
     "@nuxt/image": "^2.2.0",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.19.2",
-    "nuxt": "^4.6.2",
-    "tailwindcss": "^4.3.3"
+    "nuxt": "^4.6.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.14"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
