@@ -2,9 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Auth\AcceptInvitation;
 use Filament\Http\Middleware\Authenticate;
@@ -15,6 +14,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -29,6 +29,12 @@ use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
+	public function boot(): void
+	{
+		// Filament's own dropdown instead of the browser's, so the option list can match the theme
+		Select::configureUsing(fn (Select $select) => $select->native(false));
+	}
+
 	public function panel( Panel $panel ): Panel
 	{
 		return $panel
@@ -43,11 +49,30 @@ class AdminPanelProvider extends PanelProvider
 					->middleware('signed')
 					->name('auth.invitation.accept');
 			})
+			// Pastel palette, matching the frontend (frontend/app/assets/css/main.css)
 			->colors([
-				'primary' => Color::Lime,
+				// lavender-deep as shade 600, and 500 (button hover) deep enough for white text too
+				'primary' => array_replace(Color::hex('#6e58a8'), [
+					500 => Color::convertToOklch('#765fb0'),
+					600 => Color::convertToOklch('#6e58a8'),
+					700 => Color::convertToOklch('#5b4890'),
+				]),
+				'success' => Color::hex('#3d7f63'), // mint-deep
+				'danger' => Color::Rose,
+				'warning' => Color::Orange,
+				'info' => Color::Sky,
+				'gray' => array_replace(Color::Stone, [
+					50 => Color::convertToOklch('#fbf7f2'), // cream, the page background
+					950 => Color::convertToOklch('#2f2a3b'), // ink, the text and avatar color
+				]),
+			])
+			->font('Quicksand')
+			->assets([
+				Css::make('admin-theme', resource_path('css/filament/admin-theme.css')),
 			])
 			->globalSearchKeyBindings([ 'ctrl+k' ]) // Search Keybindings, control + k gets u to global search
 			->sidebarCollapsibleOnDesktop() // Collapse sidebar
+			->sidebarWidth('16rem')
 			//->sidebarFullyCollapsibleOnDesktop() // Collapse sidebar as default, use the method
 			->navigationItems([
 				NavigationItem::make('RSC Anderlecht')
@@ -73,10 +98,6 @@ class AdminPanelProvider extends PanelProvider
 				Dashboard::class,
 			])
 			->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-			->widgets([
-				AccountWidget::class,
-				FilamentInfoWidget::class,
-			])
 			->middleware([
 				EncryptCookies::class,
 				AddQueuedCookiesToResponse::class,

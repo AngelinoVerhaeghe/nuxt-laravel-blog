@@ -2,56 +2,50 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\CountsPerMonth;
 use App\Models\Product;
-use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 
 class ProductsChart extends ChartWidget
 {
+	use CountsPerMonth;
+
 	public static function canView(): bool
 	{
 		// Shop data is for admins only
 		return auth()->user()?->hasRole('admin') ?? false;
 	}
 
-    protected ?string $heading = 'Chart';
+	protected ?string $heading = 'Products added';
 
-	protected static ?int $sort = 3;
-    protected function getData(): array
-    {
-		$data = $this->getProductsPerMonth();
+	protected ?string $description = 'Last 12 months';
 
-        return [
-            'datasets' => [
-				[
-					'label' => 'Products created',
-					'data' => $data['productsPerMonth']
-				]
-            ],
-	        'labels' => $data['months']
-        ];
-    }
+	protected static ?int $sort = 4;
 
-    protected function getType(): string
-    {
-        return 'line';
-    }
-
-	private function getProductsPerMonth(): array
+	protected function getData(): array
 	{
-		$now = Carbon::now();
-		$productsPerMonth = [];
-		$months = collect(range(1, 12))->map(function ($month) use ($now, $productsPerMonth) {
-			$count = Product::whereMonth('created_at', Carbon::parse($now->month($month)->format('Y-m')))->count();
-
-			$productsPerMonth = $count;
-
-			return $now->month($month)->format('M');
-		})->toArray();
+		$productsPerMonth = $this->countPerMonth(Product::query());
 
 		return [
-			'productsPerMonth' => $productsPerMonth,
-			'months' => $months
+			'datasets' => [
+				[
+					'label' => 'Products added',
+					'data' => array_values($productsPerMonth),
+				],
+			],
+			'labels' => array_keys($productsPerMonth),
 		];
+	}
+
+	protected function getOptions(): array
+	{
+		return [
+			'scales' => [ 'y' => [ 'beginAtZero' => true, 'ticks' => [ 'precision' => 0 ] ] ],
+		];
+	}
+
+	protected function getType(): string
+	{
+		return 'line';
 	}
 }

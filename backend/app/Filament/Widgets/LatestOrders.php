@@ -16,13 +16,14 @@ class LatestOrders extends BaseWidget
 		return auth()->user()?->hasRole('admin') ?? false;
 	}
 
-	protected static ?int $sort = 4;
+	protected static ?int $sort = 5;
 
 	protected int | string | array $columnSpan = 'full';
 
 	public function table( Table $table ): Table
 	{
 		return $table
+			->heading('Latest orders')
 			->query(OrderResource::getEloquentQuery())
 			->defaultPaginationPageOption(5)
 			->defaultSort('created_at', 'desc')

@@ -77,8 +77,8 @@ There is no public registration. An admin adds a user under **Users → New user
 
 | Role | Can manage |
 |---|---|
-| `admin` | Everything: users, roles and permissions, the shop (products, brands, customers, orders) and the dashboard widgets |
-| `editor` | Blog content: posts, articles, tags, categories |
+| `admin` | Everything: users, roles and permissions, the shop (products, brands, customers, orders) and all dashboard widgets |
+| `editor` | Blog content: posts, articles, tags, categories, and the blog widgets on the dashboard |
 
 Users without one of these roles can't open the admin panel.
 

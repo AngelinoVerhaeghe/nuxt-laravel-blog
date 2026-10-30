@@ -51,8 +51,8 @@ There is no public registration. Admins add users under **Users → New user** (
 
 | Role | Access |
 |---|---|
-| `admin` | Everything: users, roles and permissions, shop (products, brands, customers, orders) and the dashboard widgets |
-| `editor` | Blog content: posts, articles, tags, categories |
+| `admin` | Everything: users, roles and permissions, shop (products, brands, customers, orders) and all dashboard widgets |
+| `editor` | Blog content: posts, articles, tags, categories, and the blog widgets on the dashboard |
 
 Users without one of these roles can't open the panel.
 
@@ -83,7 +83,34 @@ Tests run on an in-memory SQLite database, so they don't need MySQL:
 php artisan test
 ```
 
-## Some screenshots from my work with FilamentPHP
+## Admin panel
 
-![project-picture-1.png](project-picture-1.png)
-![project-picture-2.png](project-picture-2.png)
+The admin panel uses the same pastel palette and fonts (Quicksand and Fraunces) as the Nuxt site. It has a light and a dark mode; it follows the system setting by default, and users can switch in the user menu.
+
+### Dashboard
+
+| Light | Dark |
+|---|---|
+| ![Dashboard in light mode](docs/screenshots/dashboard-light.png) | ![Dashboard in dark mode](docs/screenshots/dashboard-dark.png) |
+
+- **Blog** (admins and editors): published posts with a 6-month trend, drafts, categories and tags, and the latest posts (click a row to edit it).
+- **Shop** (admins only): customers, products and pending orders, orders by status, products added in the last 12 months, and the latest orders.
+
+### Editing a post
+
+| Light | Dark |
+|---|---|
+| ![Post editor in light mode](docs/screenshots/post-edit-light.png) | ![Post editor in dark mode](docs/screenshots/post-edit-dark.png) |
+
+### Theme
+
+- **Colors and font** are set in `app/Providers/Filament/AdminPanelProvider.php`.
+- **Everything else** (background, glass cards, the content window, pill buttons, dropdowns, scrollbars) is plain CSS in `resources/css/filament/admin-theme.css`, so there is no npm build step.
+
+After changing the CSS, publish it to `public/css/app/admin-theme.css`, which is the copy browsers load:
+
+```bash
+php artisan filament:assets
+```
+
+`composer update` runs this too.
