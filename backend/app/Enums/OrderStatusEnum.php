@@ -2,10 +2,29 @@
 
 namespace App\Enums;
 
-enum OrderStatusEnum : string
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
+// Values match the `status` column of the orders table
+enum OrderStatusEnum : string implements HasLabel, HasColor
 {
-	case PENDING = 'Pending';
-	case PROCESSING = 'Processing';
-	case COMPLETED = 'Completed';
-	case DECLINED = 'Declined';
+	case PENDING = 'pending';
+	case PROCESSING = 'processing';
+	case COMPLETED = 'completed';
+	case DECLINED = 'declined';
+
+	public function getLabel(): string
+	{
+		return ucfirst($this->value);
+	}
+
+	public function getColor(): string
+	{
+		return match ( $this ) {
+			self::PENDING => 'warning',
+			self::PROCESSING => 'info',
+			self::COMPLETED => 'success',
+			self::DECLINED => 'danger',
+		};
+	}
 }
