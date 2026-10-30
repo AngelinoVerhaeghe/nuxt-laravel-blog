@@ -14,6 +14,7 @@
 
 	--nlb-glass: rgb(255 255 255 / 0.62);
 	--nlb-glass-strong: rgb(255 255 255 / 0.86);
+	--nlb-popover: #fffdfa;
 	--nlb-glass-edge: rgb(255 255 255 / 0.75);
 	--nlb-shadow: 0 0 0 1px rgb(47 42 59 / 0.06), 0 16px 40px -18px rgb(110 88 168 / 0.28);
 
@@ -25,6 +26,7 @@
 .dark {
 	--nlb-glass: rgb(255 255 255 / 0.04);
 	--nlb-glass-strong: rgb(30 27 38 / 0.92);
+	--nlb-popover: #2a2533;
 	--nlb-glass-edge: rgb(255 255 255 / 0.08);
 	--nlb-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 16px 40px -18px rgb(0 0 0 / 0.6);
 }
@@ -64,11 +66,25 @@
 	box-shadow: inset 0 1px 0 var(--nlb-glass-edge), var(--nlb-shadow);
 }
 
-.fi-dropdown-panel,
+/*
+  The blur makes every glass card its own stacking context, so a dropdown opened inside one
+  would be drawn under the next card. Lift the card that has an open dropdown (or focus) above
+  its neighbours.
+*/
+:is(.fi-section, .fi-ta-ctn, .fi-wi-stats-overview-stat):is(:focus-within, :has([aria-expanded='true'])) {
+	position: relative;
+	z-index: 20;
+}
+
 .fi-modal-window {
 	background-color: var(--nlb-glass-strong);
 	backdrop-filter: blur(24px) saturate(1.5);
 	-webkit-backdrop-filter: blur(24px) saturate(1.5);
+}
+
+/* Dropdowns are opaque: inside a glass card their blur can't reach what's behind the card */
+.fi-dropdown-panel {
+	background-color: var(--nlb-popover);
 }
 
 .fi-topbar {
