@@ -135,3 +135,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs both on every pull request and 
 - [`backend/README.md`](backend/README.md): backend stack, setup and admin panel screenshots
 - [`frontend/README.md`](frontend/README.md): frontend stack, setup and production build
 - [`backend/docs/Nuxt-Content.md`](backend/docs/Nuxt-Content.md): writing markdown posts
+
+## License
+
+[MIT](LICENSE)
