@@ -14,7 +14,7 @@ const { data: post, status } = await useFetch(() => `${ apiBase }/posts/${ slug 
 </script>
 
 <template>
-    <article class="prose prose-invert lg:prose-lg">
+    <article class="prose lg:prose-lg prose-headings:font-fraunces prose-headings:font-medium prose-a:text-lavender-deep">
         <ContentRenderer v-if="markdownPost" :value="markdownPost"/>
         <div v-else-if="status === 'idle' || status === 'pending'">Loading...</div>
         <div v-else-if="post">

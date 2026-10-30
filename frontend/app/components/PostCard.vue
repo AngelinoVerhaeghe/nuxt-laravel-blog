@@ -8,21 +8,20 @@ defineProps({
 </script>
 
 <template>
-    <div class="bg-white rounded-md shadow-md overflow-hidden">
+    <div class="group flex flex-col rounded-3xl bg-white shadow-sm ring-1 ring-ink/5 overflow-hidden hover:-translate-y-1 hover:shadow-xl hover:shadow-lavender-deep/10 duration-300">
         <div class="relative">
             <nuxt-link :to="`/blog/${post.slug}`">
                 <nuxt-img v-if="post.imageUrl" class="w-full h-48 object-cover" :src="post.imageUrl" :alt="post.title"/>
             </nuxt-link>
-            <small :class="post.imageUrl ? 'absolute left-4 bottom-4' : 'inline-block ml-6 mt-6'" class="text-xs text-amber-900 font-bold uppercase px-3 py-1 rounded-full bg-amber-300">{{ post.category.name }}</small>
+            <small :class="post.imageUrl ? 'absolute left-4 bottom-4' : 'inline-block ml-6 mt-6'" class="text-xs text-lavender-deep font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-lavender">{{ post.category.name }}</small>
         </div>
 
-        <div class="p-6">
-            <small class="flex justify-end text-sm text-gray-500">{{ post.createAt }}</small>
-            <h5 class="font-semibold text-xl underline decoration-amber-400">{{ post.title }}</h5>
-            <p class="text-xs md:text-base py-4">{{ post.description.substring(0,100) + '...' }}</p>
-            <small class="flex justify-end">{{ post.author.name }}</small>
-            <nuxt-link :to="`/blog/${post.slug}`" class="inline-block rounded-sm bg-amber-500 px-4 pb-1 pt-1.5 text-xs font-medium uppercase leading-normal shadow-xs text-amber-100 hover:bg-amber-700 duration-200">
-                Read More
+        <div class="flex flex-1 flex-col p-6">
+            <small class="text-xs text-ink-soft">{{ post.createAt }} &middot; {{ post.author.name }}</small>
+            <h5 class="mt-2 font-fraunces text-xl font-medium leading-snug">{{ post.title }}</h5>
+            <p class="text-sm text-ink-soft leading-relaxed py-4">{{ post.description.substring(0,100) + '...' }}</p>
+            <nuxt-link :to="`/blog/${post.slug}`" class="mt-auto text-sm font-semibold text-lavender-deep hover:text-ink duration-200">
+                Read more &rarr;
             </nuxt-link>
         </div>
     </div>

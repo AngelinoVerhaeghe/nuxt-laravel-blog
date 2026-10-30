@@ -1,6 +1,6 @@
 @import url(https://fonts.bunny.net/css?family=quicksand:300,400,500,600,700)
 layer(base);
-@import url(https://fonts.bunny.net/css?family=merriweather:300,300i,400,400i,700,700i)
+@import url(https://fonts.bunny.net/css?family=fraunces:400,400i,500,500i,600,600i)
 layer(base);
 
 @import 'tailwindcss';
@@ -10,7 +10,18 @@ layer(base);
 @theme {
   --font-*: initial;
   --font-quicksand: Quicksand, sans-serif;
-  --font-merriweather: Merriweather, sans-serif;
+  --font-fraunces: Fraunces, Georgia, serif;
+
+  /* Pastel palette: a light tint for surfaces and a deep tone for text on it */
+  --color-cream: #fbf7f2;
+  --color-ink: #2f2a3b;
+  --color-ink-soft: #6b6478;
+  --color-lavender: #e9e0f8;
+  --color-lavender-deep: #6e58a8;
+  --color-peach: #fde3d3;
+  --color-rose: #f9dde6;
+  --color-mint: #d9f0e5;
+  --color-mint-deep: #3d7f63;
 }
 
 /*
@@ -28,5 +39,10 @@ layer(base);
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+  }
+
+  ::selection {
+    background-color: var(--color-lavender);
+    color: var(--color-ink);
   }
 }
