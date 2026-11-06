@@ -1,15 +1,19 @@
 # Codewave blog: frontend
 
-Nuxt 4 site for the Codewave blog. It shows posts from the Laravel API in [`../backend`](../backend) together with markdown posts from `content/blog`, in a soft pastel theme.
+Nuxt 4 site for the Codewave blog. It shows posts from the Laravel API in [`../backend`](../backend) together with markdown posts from `content/blog`, in a comic-book style on a pastel palette, with a light ("hero") and a dark ("villain") mode.
 
-![Codewave homepage](home_page.png)
+| Hero (light) | Villain (dark) |
+|---|---|
+| ![Homepage in light mode](docs/screenshots/home-light.png) | ![Homepage in dark mode](docs/screenshots/home-dark.png) |
+| ![Blog post in light mode](docs/screenshots/post-light.png) | ![Blog post in dark mode](docs/screenshots/post-dark.png) |
+| ![Homepage on a phone in light mode](docs/screenshots/mobile-light.png) | ![Homepage on a phone in dark mode](docs/screenshots/mobile-dark.png) |
 
 ## Stack
 
 - [Nuxt 4](https://nuxt.com/docs) (Vue 3.5), source in `app/`
 - [Nuxt Content 3](https://content.nuxt.com) for markdown posts, collection defined in `content.config.ts`
 - [Tailwind CSS 4](https://tailwindcss.com) via `@tailwindcss/vite`, with the typography plugin; theme in `app/assets/css/main.css`
-- `@nuxt/image`, `@nuxt/icon`, Headless UI and Heroicons
+- `@nuxtjs/color-mode` for the light/dark switch, `@nuxt/image` and `@nuxt/icon` (Unicons, `uil:*`)
 - TypeScript checks with `vue-tsc`
 
 ## Requirements
@@ -50,6 +54,7 @@ CI (`.github/workflows/ci.yml`) runs `npm run typecheck` and `npx nuxt build` on
 | `/` | Hero, a featured article and the three latest posts |
 | `/blog` | All posts, newest first |
 | `/blog/<slug>` | One post |
+| Any other path | The error page (`app/error.vue`), for example a 404 |
 
 ## Posts
 
@@ -62,27 +67,53 @@ On `/blog/<slug>`, a markdown post with that slug wins over an API post with the
 
 ## Theme
 
-The pastel palette and fonts are Tailwind theme tokens in `app/assets/css/main.css`, so they're available as utilities like `bg-lavender` or `text-ink-soft`:
+### Colors
+
+Every color is a CSS variable in `app/assets/css/main.css`. The `:root` block sets the light (hero) values and the `.dark` block sets the dark (villain) ones. Tailwind theme tokens point at these variables, so a utility like `bg-lavender` or `text-ink-soft` picks the right color in both modes and most markup needs no `dark:` variants.
 
 | Token | Use |
 |---|---|
-| `cream` | Page background |
+| `paper`, `panel` | Page background and card surfaces |
 | `ink`, `ink-soft` | Text and muted text |
-| `lavender`, `rose`, `peach`, `mint` | Light tints for surfaces, badges and the hero gradient |
-| `lavender-deep`, `mint-deep` | Accent text on those tints |
+| `line`, `pop` | Comic outlines and the hard offset shadows |
+| `lavender`, `rose`, `peach`, `mint`, `lemon`, `sky` | Pastel tints for panels, badges and caption boxes |
+| `lavender-deep`, `rose-deep`, `mint-deep` | Accent text on those tints |
 
-Headings use Fraunces (`font-fraunces`) and body text uses Quicksand (`font-quicksand`), both loaded from Bunny Fonts.
+Headings use Bangers (`font-comic`) and body text uses Quicksand (`font-quicksand`), both loaded from Bunny Fonts.
+
+### Comic utilities
+
+| Utility | What it does |
+|---|---|
+| `comic-panel` | Bordered panel with a hard offset shadow |
+| `comic-title` | Big comic lettering with a pastel drop shadow |
+| `comic-rays` | Radiating rays behind a splash panel; set the ray color with `[--ray:var(--rose)]` |
+| `halftone` | Printed-comic dot pattern |
+| `shadow-comic-sm`, `shadow-comic`, `shadow-comic-lg` | Hard offset shadows in three sizes |
+
+### Light and dark mode
+
+`@nuxtjs/color-mode` puts a `dark` class on `<html>`. It follows the system setting until a visitor uses the switch in the menu (`ThemeSwitch`), then remembers the choice in `localStorage` (`codewave-color-mode`).
+
+### Animations
+
+- `v-reveal` (`app/plugins/reveal.ts`) slides an element in once it scrolls into view: `v-reveal` (from below), `v-reveal="'left'"` (also `'right'`, `'down'`, `'pop'`), or `v-reveal="{ from: 'right', delay: 150 }"`.
+- Pages slide in and out on navigation (`app.pageTransition` in `nuxt.config.ts`).
+- Visitors with "reduce motion" turned on get no animations, and without JavaScript everything is shown straight away.
 
 ## Project structure
 
 ```
 app/
   app.vue               Layout: navigation, page, footer
-  assets/css/main.css   Tailwind setup and theme tokens
-  components/           Button, PostCard, TheNavigation, TheFooter
+  error.vue             Error page (404 and others)
+  assets/css/main.css   Tailwind setup, theme tokens for both modes, comic utilities, animations
+  components/           Navigation, footer, logo, theme switch, post card, comic bursts and headings
   components/content/   Components for use inside markdown posts
   composables/          useBlogPosts
   pages/                index, blog/index, blog/[slug]
+  plugins/reveal.ts     The v-reveal scroll animation
+docs/screenshots/       Screenshots for this README
 content/blog/           Markdown posts
 public/images/blog/     Images for markdown posts
 nuxt.config.ts          Modules, API base URL, content and image settings
@@ -91,5 +122,5 @@ content.config.ts       Frontmatter schema for the blog collection
 
 ## Not built yet
 
-- The **Projects** and **Cases** links in the navigation have no pages.
+- The **Projects** and **Cases** links in the navigation have no pages yet; they show the 404 page.
 - The featured article on the homepage is hard-coded in `app/pages/index.vue`.

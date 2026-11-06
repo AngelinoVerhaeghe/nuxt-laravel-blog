@@ -1,48 +1,290 @@
-@import url(https://fonts.bunny.net/css?family=quicksand:300,400,500,600,700)
-layer(base);
-@import url(https://fonts.bunny.net/css?family=fraunces:400,400i,500,500i,600,600i)
+@import url(https://fonts.bunny.net/css?family=bangers:400|quicksand:400,500,600,700)
 layer(base);
 
 @import 'tailwindcss';
 
 @plugin '@tailwindcss/typography';
 
-@theme {
-  --font-*: initial;
-  --font-quicksand: Quicksand, sans-serif;
-  --font-fraunces: Fraunces, Georgia, serif;
-
-  /* Pastel palette: a light tint for surfaces and a deep tone for text on it */
-  --color-cream: #fbf7f2;
-  --color-ink: #2f2a3b;
-  --color-ink-soft: #6b6478;
-  --color-lavender: #e9e0f8;
-  --color-lavender-deep: #6e58a8;
-  --color-peach: #fde3d3;
-  --color-rose: #f9dde6;
-  --color-mint: #d9f0e5;
-  --color-mint-deep: #3d7f63;
-}
+/* Dark ("villain") mode follows the `dark` class @nuxtjs/color-mode puts on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
+  Comic-book look on a pastel palette. Light mode is "hero" (cream paper, ink
+  outlines), dark mode is "villain" (a night-purple lair with pastel outlines).
+  Every color is a CSS variable that the `.dark` block below swaps, so most
+  markup needs no `dark:` variants.
 */
+:root {
+  --paper: #fbf7f2;
+  --panel: #ffffff;
+  --ink: #2f2a3b;
+  --ink-soft: #6b6478;
+  --line: #2f2a3b;
+  --pop: #2f2a3b;
+  --dots: rgb(47 42 59 / 0.07);
+  --title-shadow: #f2b3c8;
+
+  --lavender: #e9e0f8;
+  --lavender-deep: #6e58a8;
+  --peach: #fde3d3;
+  --rose: #f9dde6;
+  --rose-deep: #b4466e;
+  --mint: #d9f0e5;
+  --mint-deep: #3d7f63;
+  --lemon: #fdf1c4;
+  --sky: #dceefa;
+}
+
+.dark {
+  --paper: #15111e;
+  --panel: #211b2d;
+  --ink: #f4effb;
+  --ink-soft: #b9b0cc;
+  --line: #d9ccf5;
+  --pop: #f4a9c4;
+  --dots: rgb(217 204 245 / 0.07);
+  --title-shadow: #6e58a8;
+
+  --lavender: #2f2648;
+  --lavender-deep: #c7b4f7;
+  --peach: #3b2a27;
+  --rose: #3c2233;
+  --rose-deep: #f4a9c4;
+  --mint: #1d3329;
+  --mint-deep: #93dbb9;
+  --lemon: #36301b;
+  --sky: #1c2b3a;
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-*: initial;
+  --font-quicksand: Quicksand, sans-serif;
+  --font-comic: Bangers, Impact, 'Arial Narrow', sans-serif;
+
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-pop: var(--pop);
+  --color-lavender: var(--lavender);
+  --color-lavender-deep: var(--lavender-deep);
+  --color-peach: var(--peach);
+  --color-rose: var(--rose);
+  --color-rose-deep: var(--rose-deep);
+  --color-mint: var(--mint);
+  --color-mint-deep: var(--mint-deep);
+  --color-lemon: var(--lemon);
+  --color-sky: var(--sky);
+
+  /* Hard, offset comic-panel shadows */
+  --shadow-comic-sm: 3px 3px 0 0 var(--pop);
+  --shadow-comic: 6px 6px 0 0 var(--pop);
+  --shadow-comic-lg: 10px 10px 0 0 var(--pop);
+}
+
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--line);
+  }
+
+  html {
+    background-color: var(--paper);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--paper);
+    /* Halftone dots, like printed comics */
+    background-image: radial-gradient(var(--dots) 1.5px, transparent 1.6px);
+    background-size: 18px 18px;
+    color: var(--ink);
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+
+  /* Tailwind 4 resets buttons to the default cursor; every clickable thing gets the hand */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 
   ::selection {
-    background-color: var(--color-lavender);
-    color: var(--color-ink);
+    background-color: var(--lemon);
+    color: var(--ink);
   }
+
+  :focus-visible {
+    outline: 3px solid var(--lavender-deep);
+    outline-offset: 3px;
+  }
+}
+
+/* A bordered comic panel with a hard shadow */
+@utility comic-panel {
+  border: 3px solid var(--line);
+  border-radius: 1.25rem;
+  background-color: var(--panel);
+  box-shadow: 6px 6px 0 0 var(--pop);
+}
+
+/* Big outlined comic lettering */
+@utility comic-title {
+  font-family: Bangers, Impact, 'Arial Narrow', sans-serif;
+  letter-spacing: 0.03em;
+  line-height: 0.95;
+  text-shadow: 0.06em 0.06em 0 var(--title-shadow);
+}
+
+/* Radiating "action rays" behind a splash panel */
+@utility comic-rays {
+  background-image: repeating-conic-gradient(from 0deg at 50% 60%, var(--ray, rgb(255 255 255 / 0.45)) 0deg 7deg, transparent 7deg 14deg);
+}
+
+@utility halftone {
+  background-image: radial-gradient(var(--dots) 1.5px, transparent 1.6px);
+  background-size: 14px 14px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Scroll reveal (see plugins/reveal.ts): slide in from a direction */
+/* ---------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0;
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal='up'] { transform: translateY(48px); }
+[data-reveal='down'] { transform: translateY(-48px); }
+[data-reveal='left'] { transform: translateX(-64px); }
+[data-reveal='right'] { transform: translateX(64px); }
+[data-reveal='pop'] { transform: scale(0.6) rotate(-8deg); }
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------------------------------------------------------------- */
+/* Page transitions                                                 */
+/* ---------------------------------------------------------------- */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateX(40px) skewX(-2deg);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateX(-40px) skewX(2deg);
+}
+
+/* ---------------------------------------------------------------- */
+/* Small looping effects                                            */
+/* ---------------------------------------------------------------- */
+@keyframes comic-float {
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--tilt, 0deg)); }
+}
+
+@keyframes comic-wiggle {
+  0%, 100% { transform: rotate(var(--tilt, -6deg)) scale(1); }
+  50% { transform: rotate(calc(var(--tilt, -6deg) * -1)) scale(1.06); }
+}
+
+@keyframes comic-slide-left {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: none; }
+}
+
+@utility animate-slide-left {
+  animation: comic-slide-left 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-float {
+  animation: comic-float 5s ease-in-out infinite;
+}
+
+@utility animate-wiggle {
+  animation: comic-wiggle 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .page-enter-active,
+  .page-leave-active {
+    transition: none;
+  }
+
+  .animate-float,
+  .animate-wiggle,
+  .animate-slide-left {
+    animation: none;
+  }
+}
+
+/* Article typography in both modes (unlayered so it beats `.prose` defaults) */
+.prose-comic {
+  --tw-prose-body: var(--ink);
+  --tw-prose-headings: var(--ink);
+  --tw-prose-lead: var(--ink-soft);
+  --tw-prose-links: var(--lavender-deep);
+  --tw-prose-bold: var(--ink);
+  --tw-prose-counters: var(--ink-soft);
+  --tw-prose-bullets: var(--lavender-deep);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--ink);
+  --tw-prose-quote-borders: var(--lavender-deep);
+  --tw-prose-captions: var(--ink-soft);
+  --tw-prose-code: var(--lavender-deep);
+  --tw-prose-th-borders: var(--line);
+  --tw-prose-td-borders: var(--line);
+}
+
+.prose-comic :where(h1, h2, h3, h4):not(:where(.not-prose, .not-prose *)) {
+  font-family: Bangers, Impact, 'Arial Narrow', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+.prose-comic :where(img):not(:where(.not-prose, .not-prose *)) {
+  border: 3px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: 6px 6px 0 0 var(--pop);
+}
+
+.prose-comic :where(pre):not(:where(.not-prose, .not-prose *)) {
+  border: 3px solid var(--line);
+  border-radius: 1rem;
+}
+
+.prose-comic :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+  border-left-width: 6px;
+  border-radius: 0 1rem 1rem 0;
+  background-color: var(--lemon);
+  padding: 0.75rem 1.25rem;
+  font-style: normal;
 }

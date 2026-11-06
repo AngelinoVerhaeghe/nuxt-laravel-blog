@@ -21,7 +21,7 @@ export async function useBlogPosts() {
     return { posts, status };
 }
 
-function fromMarkdown(post) {
+export function fromMarkdown(post) {
     return {
         id: post.id,
         title: post.title,
