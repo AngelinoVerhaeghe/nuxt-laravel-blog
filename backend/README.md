@@ -85,7 +85,7 @@ php artisan test
 
 ## Admin panel
 
-The admin panel uses the same pastel palette and fonts (Quicksand and Fraunces) as the Nuxt site. It has a light and a dark mode; it follows the system setting by default, and users can switch in the user menu.
+The admin panel uses the same pastel palette and body font (Quicksand) as the Nuxt site, with Fraunces for headings. It has a light and a dark mode; it follows the system setting by default, and users can switch in the user menu.
 
 ### Dashboard
 

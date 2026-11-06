@@ -1,15 +1,22 @@
 <template>
-    <div class="bg-cream text-ink font-quicksand antialiased scroll-smooth min-h-screen">
-        <div class="container max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-10">
-            <TheNavigation/>
+    <div class="flex min-h-screen flex-col overflow-x-clip font-quicksand text-ink antialiased">
+        <TheNavigation/>
 
-            <main class="mt-8 lg:mt-12">
+        <main class="w-full flex-1 px-4 pt-8 sm:px-6 lg:px-10 lg:pt-12">
+            <div class="mx-auto max-w-6xl">
                 <NuxtPage/>
-            </main>
+            </div>
+        </main>
 
-            <TheFooter/>
-        </div>
+        <TheFooter/>
     </div>
 </template>
+
 <script setup lang="ts">
+useHead({
+    htmlAttrs: { lang: 'en' },
+    titleTemplate: (title) => title ? `${ title } · Codewave` : 'Codewave',
+    // Without JavaScript the scroll reveal never runs, so show everything straight away
+    noscript: [ { innerHTML: '<style>[data-reveal]{opacity:1!important;transform:none!important}</style>' } ],
+})
 </script>

@@ -1,48 +1,90 @@
-<script setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
-
-const route = useRoute();
+<script setup lang="ts">
+const route = useRoute()
+const open = ref(false)
 
 const navigation = [
-    { name: 'Home', href: '/', current: route.name === 'index' },
-    { name: 'Blog', href: '/blog', current: route.name.includes('blog') },
-    { name: 'Projects', href: '/projects', current: route.name === 'projects' },
-    { name: 'Cases', href: 'cases', current: route.name === 'cases' },
+    { name: 'Home', href: '/', icon: 'uil:rocket' },
+    { name: 'Blog', href: '/blog', icon: 'uil:book-open' },
+    { name: 'Projects', href: '/projects', icon: 'uil:bolt' },
+    { name: 'Cases', href: '/cases', icon: 'uil:shield' },
 ]
+
+function isCurrent(href: string) {
+    return href === '/' ? route.path === '/' : route.path.startsWith(href)
+}
+
+// Close the mobile menu after navigating, and on Escape
+watch(() => route.fullPath, () => open.value = false)
+
+function closeOnEscape(event: KeyboardEvent) {
+    if (event.key === 'Escape') open.value = false
+}
+
+onMounted(() => window.addEventListener('keydown', closeOnEscape))
+onBeforeUnmount(() => window.removeEventListener('keydown', closeOnEscape))
 </script>
 
 <template>
-    <Disclosure as="nav" v-slot="{ open }">
-        <div class="mx-auto max-w-6xl">
-            <div class="relative flex h-16 items-center justify-between">
-                <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                    <!-- Mobile menu button-->
-                    <DisclosureButton class="relative inline-flex items-center justify-center rounded-md p-2 text-ink-soft hover:bg-lavender hover:text-ink focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-lavender-deep">
-                        <span class="absolute -inset-0.5" />
-                        <span class="sr-only">Open main menu</span>
-                        <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
-                        <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
-                    </DisclosureButton>
-                </div>
-                <div class="flex flex-1 items-center justify-center sm:justify-between">
-                    <a href="/" class="font-fraunces text-2xl font-medium italic text-ink">Codewave</a>
-                    <div class="hidden sm:ml-6 sm:block">
-                        <div class="flex space-x-10">
-                            <a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'text-ink' : 'text-ink-soft hover:text-ink', 'group text-sm font-semibold tracking-wide duration-200']" :aria-current="item.current ? 'page' : undefined">
-                                {{ item.name }}
-                                <span :class="[item.current ? 'max-w-full' : 'max-w-0 group-hover:max-w-full', 'block transition-all duration-500 h-0.5 rounded-full bg-lavender-deep']"></span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <header class="sticky top-0 z-40 px-4 pt-3 sm:px-6 lg:px-10">
+        <nav class="relative mx-auto max-w-6xl" aria-label="Main">
+            <div class="comic-panel flex items-center justify-between gap-3 rounded-2xl px-3 py-2 sm:px-5 lg:py-3">
+                <TheLogo/>
 
-        <DisclosurePanel class="sm:hidden">
-            <div class="space-y-1 px-2 pb-3 pt-2">
-                <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-lavender text-ink' : 'text-ink-soft hover:bg-lavender/60 hover:text-ink', 'block rounded-xl px-3 py-2 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
+                <!-- Tablet and desktop -->
+                <ul class="hidden items-center gap-1 md:flex lg:gap-3">
+                    <li v-for="item in navigation" :key="item.name">
+                        <NuxtLink
+                            :to="item.href"
+                            :aria-current="isCurrent(item.href) ? 'page' : undefined"
+                            :class="isCurrent(item.href)
+                                ? 'border-line bg-lavender text-ink shadow-comic-sm -rotate-2'
+                                : 'border-transparent text-ink-soft hover:border-line hover:bg-peach hover:text-ink hover:rotate-2'"
+                            class="inline-block rounded-full border-3 px-3 py-1 font-comic text-xl tracking-wider transition duration-200 lg:px-4"
+                        >
+                            {{ item.name }}
+                        </NuxtLink>
+                    </li>
+                </ul>
+
+                <div class="flex items-center gap-2">
+                    <ThemeSwitch/>
+
+                    <!-- Mobile -->
+                    <button
+                        type="button"
+                        class="flex h-11 w-11 items-center justify-center rounded-xl border-3 border-line bg-rose text-ink shadow-comic-sm transition active:translate-x-0.5 active:translate-y-0.5 active:shadow-none md:hidden"
+                        :aria-expanded="open"
+                        aria-controls="mobile-menu"
+                        @click="open = !open"
+                    >
+                        <span class="sr-only">{{ open ? 'Close menu' : 'Open menu' }}</span>
+                        <Icon :name="open ? 'uil:times' : 'uil:bars'" size="1.5rem" class="transition-transform duration-300" :class="open && 'rotate-90'"/>
+                    </button>
+                </div>
             </div>
-        </DisclosurePanel>
-    </Disclosure>
+
+            <Transition
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="opacity-0 -translate-y-4 scale-95"
+                leave-active-class="transition duration-200 ease-in"
+                leave-to-class="opacity-0 -translate-y-2 scale-95"
+            >
+                <div v-if="open" id="mobile-menu" class="comic-panel halftone absolute inset-x-0 top-full mt-3 origin-top rounded-2xl bg-panel p-3 md:hidden">
+                    <ul class="space-y-2">
+                        <li v-for="(item, index) in navigation" :key="item.name" class="animate-slide-left" :style="{ animationDelay: `${ 60 + index * 70 }ms` }">
+                            <NuxtLink
+                                :to="item.href"
+                                :aria-current="isCurrent(item.href) ? 'page' : undefined"
+                                :class="isCurrent(item.href) ? 'bg-lavender shadow-comic-sm' : 'bg-panel hover:bg-peach'"
+                                class="flex items-center gap-3 rounded-xl border-3 border-line px-4 py-2 font-comic text-2xl tracking-wider text-ink transition"
+                            >
+                                <Icon :name="item.icon" size="1.4rem" class="text-lavender-deep"/>
+                                {{ item.name }}
+                            </NuxtLink>
+                        </li>
+                    </ul>
+                </div>
+            </Transition>
+        </nav>
+    </header>
 </template>

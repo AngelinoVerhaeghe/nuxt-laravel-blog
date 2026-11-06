@@ -8,7 +8,18 @@ export default defineNuxtConfig( {
         '@nuxt/icon',
         '@nuxt/content',
         '@nuxt/image',
+        '@nuxtjs/color-mode',
     ],
+    app: {
+        pageTransition: { name: 'page', mode: 'out-in' },
+    },
+    // Light ("hero") and dark ("villain") mode: a `dark` class on <html>, following the OS until the visitor picks one
+    colorMode: {
+        classSuffix: '',
+        preference: 'system',
+        fallback: 'light',
+        storageKey: 'codewave-color-mode',
+    },
     runtimeConfig: {
         public: {
             // Override with NUXT_PUBLIC_API_BASE
