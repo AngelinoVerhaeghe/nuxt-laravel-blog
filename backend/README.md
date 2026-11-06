@@ -85,11 +85,17 @@ php artisan test
 
 ## Admin panel
 
-The admin panel uses the same pastel palette and body font (Quicksand) as the Nuxt site, with Fraunces for headings. It has a light and a dark mode; it follows the system setting by default, and users can switch in the user menu.
+The admin panel has the same comic-book style as the Nuxt site: the pastel palette, thick outlines, hard offset shadows, halftone dots, and Bangers lettering for headings, menu group labels and buttons (body text and menu items stay Quicksand). Like the site, it has a light ("hero") and a dark ("villain") mode. It follows the system setting by default, and users can switch in the user menu.
+
+### Signing in
+
+| Hero (light) | Villain (dark) |
+|---|---|
+| ![Sign-in page in light mode](docs/screenshots/login-light.png) | ![Sign-in page in dark mode](docs/screenshots/login-dark.png) |
 
 ### Dashboard
 
-| Light | Dark |
+| Hero (light) | Villain (dark) |
 |---|---|
 | ![Dashboard in light mode](docs/screenshots/dashboard-light.png) | ![Dashboard in dark mode](docs/screenshots/dashboard-dark.png) |
 
@@ -98,14 +104,14 @@ The admin panel uses the same pastel palette and body font (Quicksand) as the Nu
 
 ### Editing a post
 
-| Light | Dark |
+| Hero (light) | Villain (dark) |
 |---|---|
 | ![Post editor in light mode](docs/screenshots/post-edit-light.png) | ![Post editor in dark mode](docs/screenshots/post-edit-dark.png) |
 
 ### Theme
 
-- **Colors and font** are set in `app/Providers/Filament/AdminPanelProvider.php`.
-- **Everything else** (background, glass cards, the content window, pill buttons, dropdowns, scrollbars) is plain CSS in `resources/css/filament/admin-theme.css`, so there is no npm build step.
+- **Colors, font and logo** are set in `app/Providers/Filament/AdminPanelProvider.php`. The logo (the bolt badge and the app name, like the site's) is `resources/views/filament/brand.blade.php`.
+- **Everything else** is plain CSS in `resources/css/filament/admin-theme.css`, so there is no npm build step: the color tokens for both modes (the same values as the frontend's), comic panels for cards, tables, stats, modals and dropdowns, the content window, the sidebar, buttons, inputs, scrollbars, and the entrance animations (the header drops in, the menu slides in from the left, cards slide up and stats pop; all off with "reduce motion").
 
 After changing the CSS, publish it to `public/css/app/admin-theme.css`, which is the copy browsers load:
 
