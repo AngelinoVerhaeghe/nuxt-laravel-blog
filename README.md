@@ -8,6 +8,18 @@ A blog with an admin panel. Posts are written in a Laravel + Filament admin pane
 | [`frontend/`](frontend) | Nuxt 4, Nuxt Content 3, Tailwind CSS 4 | `http://localhost:3000` |
 | Mailpit (local only) | Catches outgoing email | `http://localhost:8025` |
 
+## Screenshots
+
+Both the site and the admin panel have a comic-book style with a light ("hero") and a dark ("villain") mode.
+
+| Hero (light) | Villain (dark) |
+|---|---|
+| ![Homepage in light mode](frontend/docs/screenshots/home-light.png) | ![Homepage in dark mode](frontend/docs/screenshots/home-dark.png) |
+| ![Admin dashboard in light mode](backend/docs/screenshots/dashboard-light.png) | ![Admin dashboard in dark mode](backend/docs/screenshots/dashboard-dark.png) |
+| ![Admin posts list in light mode](backend/docs/screenshots/posts-light.png) | ![Admin posts list in dark mode](backend/docs/screenshots/posts-dark.png) |
+
+More in the [frontend](frontend/README.md) and [backend](backend/README.md) READMEs.
+
 ## Requirements
 
 - PHP 8.5 with the `intl`, `pdo_mysql`, `gd` and `zip` extensions, and Composer 2
@@ -133,7 +145,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs both on every pull request and 
 ## More documentation
 
 - [`backend/README.md`](backend/README.md): backend stack, setup and admin panel screenshots
-- [`frontend/README.md`](frontend/README.md): frontend stack, setup and production build
+- [`frontend/README.md`](frontend/README.md): frontend stack, setup, production build, theme and screenshots
 - [`backend/docs/Nuxt-Content.md`](backend/docs/Nuxt-Content.md): writing markdown posts
 
 ## License

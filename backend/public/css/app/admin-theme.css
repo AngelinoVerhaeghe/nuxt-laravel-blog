@@ -1,113 +1,156 @@
 /*
-  Pastel admin theme, matching the frontend (frontend/app/assets/css/main.css).
+  Comic-book admin theme with a hero (light) and villain (dark) mode, matching the
+  frontend (frontend/app/assets/css/main.css): thick outlines, hard offset shadows,
+  halftone dots, Bangers lettering and the pastel palette.
   Loaded after Filament's own styles; publish changes with `php artisan filament:assets`.
 */
-@import url('https://fonts.bunny.net/css?family=fraunces:400,500,600');
+@import url('https://fonts.bunny.net/css?family=bangers:400');
 
+/* ------------------------------------------------------------------ */
+/* Tokens: light (hero) on :root, dark (villain) on .dark              */
+/* ------------------------------------------------------------------ */
 :root {
-	--nlb-cream: #fbf7f2;
+	--nlb-paper: #fbf7f2;
+	--nlb-panel: #ffffff;
+	--nlb-frame: #ece4f9;
 	--nlb-ink: #2f2a3b;
+	--nlb-ink-soft: #6b6478;
+	--nlb-line: #2f2a3b;
+	--nlb-pop: #2f2a3b;
+	--nlb-dots: rgb(47 42 59 / 0.08);
+	--nlb-title-shadow: #f2b3c8;
+
 	--nlb-lavender: #e9e0f8;
+	--nlb-lavender-deep: #6e58a8;
 	--nlb-peach: #fde3d3;
 	--nlb-rose: #f9dde6;
+	--nlb-rose-deep: #b4466e;
 	--nlb-mint: #d9f0e5;
+	--nlb-lemon: #fdf1c4;
+	--nlb-sky: #dceefa;
 
-	--nlb-glass: rgb(255 255 255 / 0.62);
-	--nlb-glass-strong: rgb(255 255 255 / 0.86);
-	--nlb-popover: #fffdfa;
-	--nlb-glass-edge: rgb(255 255 255 / 0.75);
-	--nlb-shadow: 0 0 0 1px rgb(47 42 59 / 0.06), 0 16px 40px -18px rgb(110 88 168 / 0.28);
+	--nlb-comic: Bangers, Impact, 'Arial Narrow', sans-serif;
+	--nlb-shadow-sm: 3px 3px 0 0 var(--nlb-pop);
+	--nlb-shadow: 5px 5px 0 0 var(--nlb-pop);
+	--nlb-shadow-lg: 8px 8px 0 0 var(--nlb-pop);
+	--nlb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+	--nlb-scrollbar: rgb(47 42 59 / 0.35);
+	--nlb-scrollbar-hover: rgb(47 42 59 / 0.6);
 
 	/* Rounder corners everywhere Filament uses these radii */
-	--radius-lg: 0.875rem;
-	--radius-xl: 1.375rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1.125rem;
 }
 
 .dark {
-	--nlb-glass: rgb(255 255 255 / 0.04);
-	--nlb-glass-strong: rgb(30 27 38 / 0.92);
-	--nlb-popover: #2a2533;
-	--nlb-glass-edge: rgb(255 255 255 / 0.08);
-	--nlb-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 16px 40px -18px rgb(0 0 0 / 0.6);
+	--nlb-paper: #15111e;
+	--nlb-panel: #211b2d;
+	--nlb-frame: #1b1527;
+	--nlb-ink: #f4effb;
+	--nlb-ink-soft: #b9b0cc;
+	--nlb-line: #d9ccf5;
+	--nlb-pop: #f4a9c4;
+	--nlb-dots: rgb(217 204 245 / 0.07);
+	--nlb-title-shadow: #6e58a8;
+
+	--nlb-lavender: #2f2648;
+	--nlb-lavender-deep: #c7b4f7;
+	--nlb-peach: #3b2a27;
+	--nlb-rose: #3c2233;
+	--nlb-rose-deep: #f4a9c4;
+	--nlb-mint: #1d3329;
+	--nlb-lemon: #36301b;
+	--nlb-sky: #1c2b3a;
+
+	--nlb-scrollbar: rgb(217 204 245 / 0.3);
+	--nlb-scrollbar-hover: rgb(217 204 245 / 0.55);
 }
 
-/* Background: soft pastel mesh */
-.fi-body {
-	background-color: var(--nlb-cream);
-	background-image:
-		radial-gradient(55rem 38rem at 0% 0%, rgb(233 224 248 / 0.95), transparent 60%),
-		radial-gradient(48rem 34rem at 100% 0%, rgb(253 227 211 / 0.8), transparent 60%),
-		radial-gradient(52rem 38rem at 100% 100%, rgb(217 240 229 / 0.85), transparent 60%),
-		radial-gradient(44rem 34rem at 0% 100%, rgb(249 221 230 / 0.75), transparent 60%);
-	background-attachment: fixed;
+/* ------------------------------------------------------------------ */
+/* Page background: a pastel frame with printed halftone dots           */
+/* ------------------------------------------------------------------ */
+.fi-body,
+.dark .fi-body {
+	background-color: var(--nlb-frame);
+	background-image: radial-gradient(var(--nlb-dots) 1.5px, transparent 1.6px);
+	background-size: 18px 18px;
 	color: var(--nlb-ink);
 }
 
-.dark .fi-body {
-	background-color: var(--gray-950);
-	background-image:
-		radial-gradient(55rem 38rem at 0% 0%, rgb(110 88 168 / 0.28), transparent 60%),
-		radial-gradient(48rem 34rem at 100% 0%, rgb(190 120 100 / 0.14), transparent 60%),
-		radial-gradient(52rem 38rem at 100% 100%, rgb(61 127 99 / 0.2), transparent 60%),
-		radial-gradient(44rem 34rem at 0% 100%, rgb(190 90 130 / 0.14), transparent 60%);
-	color: var(--gray-100);
+::selection {
+	background-color: var(--nlb-lemon);
+	color: var(--nlb-ink);
 }
 
-/* Frosted glass surfaces */
-.fi-topbar,
-.fi-sidebar,
+/* ------------------------------------------------------------------ */
+/* Comic panels: cards, tables, stats, modals, dropdowns                */
+/* ------------------------------------------------------------------ */
 .fi-section:not(.fi-section-not-contained),
 .fi-ta-ctn,
 .fi-wi-stats-overview-stat,
-.fi-simple-main {
-	background-color: var(--nlb-glass);
-	backdrop-filter: blur(20px) saturate(1.5);
-	-webkit-backdrop-filter: blur(20px) saturate(1.5);
-	box-shadow: inset 0 1px 0 var(--nlb-glass-edge), var(--nlb-shadow);
+.fi-simple-main,
+.fi-no-notification {
+	border: 3px solid var(--nlb-line);
+	border-radius: 1.25rem;
+	background-color: var(--nlb-panel);
+	box-shadow: var(--nlb-shadow);
+}
+
+.fi-modal-window {
+	border: 3px solid var(--nlb-line);
+	border-radius: 1.5rem;
+	background-color: var(--nlb-panel);
+	box-shadow: var(--nlb-shadow-lg);
+}
+
+.fi-dropdown-panel {
+	border: 3px solid var(--nlb-line);
+	border-radius: 1rem;
+	background-color: var(--nlb-panel);
+	box-shadow: var(--nlb-shadow);
 }
 
 /*
-  The blur makes every glass card its own stacking context, so a dropdown opened inside one
-  would be drawn under the next card. Lift the card that has an open dropdown (or focus) above
-  its neighbours.
+  An open dropdown must sit above the next card. Cards that are their own stacking
+  context (for example while their entrance animation runs) would otherwise draw over it,
+  so lift the card or widget that has an open dropdown (or focus) above its neighbours.
 */
-:is(.fi-section, .fi-ta-ctn, .fi-wi-stats-overview-stat):is(:focus-within, :has([aria-expanded='true'])) {
+:is(.fi-section, .fi-ta-ctn, .fi-wi-stats-overview-stat, .fi-page-content > *, .fi-wi-widget):is(:focus-within, :has([aria-expanded='true'])) {
 	position: relative;
 	z-index: 20;
 }
 
-.fi-modal-window {
-	background-color: var(--nlb-glass-strong);
-	backdrop-filter: blur(24px) saturate(1.5);
-	-webkit-backdrop-filter: blur(24px) saturate(1.5);
-}
-
-/* Dropdowns are opaque: inside a glass card their blur can't reach what's behind the card */
-.fi-dropdown-panel {
-	background-color: var(--nlb-popover);
-}
-
-.fi-topbar {
-	background-color: rgb(255 255 255 / 0.45);
-	box-shadow: 0 1px 0 var(--nlb-glass-edge);
-}
-
+/* ------------------------------------------------------------------ */
+/* Layout: on desktop the content scrolls inside one big comic panel    */
+/* framed by the top bar and sidebar. On mobile the sidebar slides over */
+/* the page and the content scrolls normally.                           */
+/* ------------------------------------------------------------------ */
+.fi-topbar,
 .dark .fi-topbar {
-	background-color: rgb(20 18 26 / 0.5);
+	background-color: var(--nlb-panel);
+	border-bottom: 3px solid var(--nlb-line);
+	box-shadow: none;
 }
 
-/*
-  Window in a window (desktop): the top bar and sidebar sit on the page background as a frame,
-  and the page content scrolls inside a rounded floating panel. On mobile the sidebar slides
-  over the page and the content scrolls normally.
-*/
+.fi-sidebar,
+.dark .fi-sidebar {
+	background-color: var(--nlb-panel);
+}
+
+@media (max-width: 63.99rem) {
+	.fi-sidebar {
+		border-inline-end: 3px solid var(--nlb-line);
+	}
+}
+
 @media (min-width: 64rem) {
 	.fi-topbar,
 	.dark .fi-topbar,
-	.fi-sidebar {
+	.fi-sidebar,
+	.dark .fi-sidebar {
 		background-color: transparent;
-		backdrop-filter: none;
-		-webkit-backdrop-filter: none;
+		border: 0;
 		box-shadow: none;
 	}
 
@@ -121,17 +164,16 @@
 	}
 
 	.fi-main-ctn {
-		height: calc(100dvh - var(--topbar-height) - 0.75rem);
+		height: calc(100dvh - var(--topbar-height) - 1.25rem);
 		min-height: 0;
-		margin-inline-end: 0.75rem;
+		margin-inline-end: 1.25rem;
 		overflow-y: auto;
+		border: 3px solid var(--nlb-line);
 		border-radius: 1.75rem;
-		/* No backdrop-filter here: it would trap Filament's modal overlays inside the window */
-		background-color: rgb(255 255 255 / 0.5);
-		box-shadow:
-			inset 0 1px 0 var(--nlb-glass-edge),
-			0 0 0 1px rgb(47 42 59 / 0.07),
-			0 24px 60px -24px rgb(110 88 168 / 0.35);
+		background-color: var(--nlb-paper);
+		background-image: radial-gradient(var(--nlb-dots) 1.5px, transparent 1.6px);
+		background-size: 14px 14px;
+		box-shadow: var(--nlb-shadow-lg);
 	}
 
 	/* Window scrollbar: kept clear of the rounded corners and inset from the edge */
@@ -148,57 +190,103 @@
 		border-right-width: 6px;
 		background-clip: padding-box;
 	}
-
-	.dark .fi-main-ctn {
-		background-color: rgb(255 255 255 / 0.03);
-		box-shadow:
-			inset 0 1px 0 rgb(255 255 255 / 0.06),
-			0 0 0 1px rgb(255 255 255 / 0.07),
-			0 24px 60px -24px rgb(0 0 0 / 0.7);
-	}
-
-	/* Cards inside the window: a bit more opaque, so they lift off it */
-	.fi-section:not(.fi-section-not-contained),
-	.fi-ta-ctn,
-	.fi-wi-stats-overview-stat {
-		background-color: rgb(255 255 255 / 0.72);
-	}
-
-	.dark .fi-section:not(.fi-section-not-contained),
-	.dark .fi-ta-ctn,
-	.dark .fi-wi-stats-overview-stat {
-		background-color: rgb(255 255 255 / 0.05);
-	}
 }
 
-.fi-simple-main {
-	border-radius: 2rem;
+/* ------------------------------------------------------------------ */
+/* Brand (resources/views/filament/brand.blade.php)                     */
+/* ------------------------------------------------------------------ */
+.nlb-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	height: 100%;
+	color: var(--nlb-ink);
 }
 
-/* Sidebar: compact pill-shaped items, active item in a lavender-to-rose wash */
+.nlb-brand-badge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border: 3px solid var(--nlb-line);
+	border-radius: 0.75rem;
+	background-color: var(--nlb-lemon);
+	box-shadow: var(--nlb-shadow-sm);
+	transform: rotate(-6deg);
+	transition: transform 300ms var(--nlb-ease);
+}
+
+.dark .nlb-brand-badge {
+	background-color: var(--nlb-rose);
+	color: var(--nlb-rose-deep);
+}
+
+.nlb-brand:hover .nlb-brand-badge {
+	transform: rotate(6deg) scale(1.1);
+}
+
+.nlb-brand-badge svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.nlb-brand-name {
+	font-family: var(--nlb-comic);
+	font-size: 1.85rem;
+	line-height: 1;
+	letter-spacing: 0.03em;
+	text-shadow: 0.06em 0.06em 0 var(--nlb-title-shadow);
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar                                                              */
+/* ------------------------------------------------------------------ */
 .fi-sidebar-nav {
 	padding-inline: calc(var(--spacing) * 4);
 	padding-block: calc(var(--spacing) * 5);
+	/* Items fade out at the top and bottom edges while scrolling */
+	mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
+	-webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
 }
 
 .fi-sidebar-nav-groups {
-	row-gap: calc(var(--spacing) * 4);
+	row-gap: calc(var(--spacing) * 5);
 }
 
 .fi-sidebar-group,
 .fi-sidebar-group-items {
-	row-gap: 2px;
+	row-gap: 4px;
 }
 
 .fi-sidebar-group-btn {
 	padding-block: calc(var(--spacing) * 1);
 }
 
+/* Group labels as little caption boxes */
+.fi-sidebar-group-label {
+	display: inline-block;
+	flex: 0 1 auto;
+	padding: 0.1rem 0.6rem;
+	border: 2px solid var(--nlb-line);
+	border-radius: 0.5rem;
+	background-color: var(--nlb-lemon);
+	color: var(--nlb-ink);
+	font-family: var(--nlb-comic);
+	font-size: 1rem;
+	font-weight: 400;
+	letter-spacing: 0.06em;
+	text-transform: none;
+	transform: rotate(-2deg);
+}
+
 .fi-sidebar-item-btn {
-	border-radius: 999px;
+	border: 2.5px solid transparent;
+	border-radius: 0.875rem;
 	column-gap: calc(var(--spacing) * 2.5);
-	padding-block: calc(var(--spacing) * 1.5);
+	padding-block: calc(var(--spacing) * 1.25);
 	padding-inline: calc(var(--spacing) * 3);
+	transition: background-color 150ms ease, border-color 150ms ease, transform 200ms var(--nlb-ease);
 }
 
 .fi-sidebar-item-btn > .fi-icon {
@@ -206,31 +294,296 @@
 	height: 1.125rem;
 }
 
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-	background-image: linear-gradient(100deg, var(--nlb-lavender), var(--nlb-rose));
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 6px 16px -8px rgb(110 88 168 / 0.45);
+/* Menu items stay in the body font, so a long menu reads calmly; group labels carry the comic lettering */
+.fi-sidebar-item-label {
+	font-weight: 600;
+	color: var(--nlb-ink-soft);
 }
 
-.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-	background-image: linear-gradient(100deg, rgb(110 88 168 / 0.35), rgb(190 90 130 / 0.2));
+.fi-sidebar-item.fi-active .fi-sidebar-item-label {
+	font-weight: 700;
+}
+
+.fi-sidebar-item-btn:hover,
+.fi-sidebar-item-btn:focus-visible {
+	border-color: var(--nlb-line);
+	background-color: var(--nlb-peach);
+	transform: rotate(1deg);
+}
+
+.fi-sidebar-item-btn:hover .fi-sidebar-item-label {
+	color: var(--nlb-ink);
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+	border-color: var(--nlb-line);
+	background-color: var(--nlb-lavender);
+	box-shadow: var(--nlb-shadow-sm);
+	transform: rotate(-1deg);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label {
+	color: var(--nlb-ink);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
+	color: var(--nlb-lavender-deep);
+}
+
+/* ------------------------------------------------------------------ */
+/* Lettering: Bangers for headings, big numbers and buttons             */
+/* ------------------------------------------------------------------ */
+.fi-header-heading,
+.fi-simple-header-heading {
+	font-family: var(--nlb-comic);
+	font-weight: 400;
+	letter-spacing: 0.03em;
+	line-height: 1;
+	text-shadow: 0.06em 0.06em 0 var(--nlb-title-shadow);
+}
+
+.fi-header-heading {
+	font-size: clamp(2.5rem, 2rem + 1.5vw, 3.5rem);
+}
+
+.fi-simple-header-heading {
+	font-size: 2.5rem;
+}
+
+.fi-section-header-heading,
+.fi-ta-header-heading,
+.fi-modal-heading,
+.fi-ta-empty-state-heading,
+.fi-wi-stats-overview-stat-value {
+	font-family: var(--nlb-comic);
+	font-weight: 400;
+	letter-spacing: 0.04em;
+}
+
+.fi-section-header-heading,
+.fi-ta-header-heading,
+.fi-modal-heading {
+	font-size: 1.5rem;
+	line-height: 1.1;
+}
+
+/* Group headings on the dashboard ("Blog", "Shop"): big lettering, no panel */
+.fi-section-not-contained > .fi-section-header .fi-section-header-heading {
+	font-size: 2.25rem;
+	text-shadow: 0.06em 0.06em 0 var(--nlb-title-shadow);
+}
+
+/* ------------------------------------------------------------------ */
+/* Stats: pastel panels with big comic numbers                          */
+/* ------------------------------------------------------------------ */
+/* Each stat sits in its own grid column, so count the columns */
+.fi-wi-stats-overview .fi-grid-col:nth-child(4n + 1) .fi-wi-stats-overview-stat { background-color: var(--nlb-lemon); }
+.fi-wi-stats-overview .fi-grid-col:nth-child(4n + 2) .fi-wi-stats-overview-stat { background-color: var(--nlb-mint); }
+.fi-wi-stats-overview .fi-grid-col:nth-child(4n + 3) .fi-wi-stats-overview-stat { background-color: var(--nlb-sky); }
+.fi-wi-stats-overview .fi-grid-col:nth-child(4n + 4) .fi-wi-stats-overview-stat { background-color: var(--nlb-rose); }
+
+.fi-wi-stats-overview-stat {
+	overflow: hidden;
+	transition: transform 200ms var(--nlb-ease), box-shadow 200ms var(--nlb-ease);
+}
+
+.fi-wi-stats-overview-stat:hover {
+	transform: translate(-2px, -2px) rotate(-0.5deg);
+	box-shadow: var(--nlb-shadow-lg);
+}
+
+.fi-wi-stats-overview-stat-value {
+	font-size: 3.25rem;
+	line-height: 1;
+	color: var(--nlb-ink);
+	text-shadow: 0.05em 0.05em 0 var(--nlb-panel);
+}
+
+.fi-wi-stats-overview-stat-label {
+	color: var(--nlb-ink);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons: outlined, with a hard shadow that presses in on click        */
+/* ------------------------------------------------------------------ */
+.fi-btn {
+	font-family: var(--nlb-comic);
+	font-weight: 400;
+	font-size: 1.1rem;
+	letter-spacing: 0.05em;
+}
+
+.fi-btn:not(.fi-btn-group .fi-btn) {
+	border: 2.5px solid var(--nlb-line);
+	border-radius: 0.875rem;
+	padding-inline: calc(var(--spacing) * 4);
+	box-shadow: var(--nlb-shadow-sm);
+	transition: transform 120ms ease, box-shadow 120ms ease, background-color 150ms ease;
+}
+
+.fi-btn:not(.fi-btn-group .fi-btn):not(:disabled):hover {
+	transform: translate(-1px, -1px);
+	box-shadow: 4px 4px 0 0 var(--nlb-pop);
+}
+
+.fi-btn:not(.fi-btn-group .fi-btn):not(:disabled):active {
+	transform: translate(3px, 3px);
 	box-shadow: none;
 }
 
+/* Gray (secondary) buttons get a pastel fill instead of plain white */
+.fi-btn.fi-color-gray:not(.fi-outlined),
+.fi-btn:not(.fi-color):not(.fi-outlined) {
+	background-color: var(--nlb-panel);
+	color: var(--nlb-ink);
+}
+
+.fi-btn.fi-color-gray:not(.fi-outlined):hover,
+.fi-btn:not(.fi-color):not(.fi-outlined):hover {
+	background-color: var(--nlb-peach);
+}
+
+/* Every clickable thing gets the hand cursor */
+button:not(:disabled),
+[role='button']:not([aria-disabled='true']),
+label[for],
+summary {
+	cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/* Inputs                                                               */
+/* ------------------------------------------------------------------ */
+.fi-input-wrp {
+	border-radius: 0.875rem;
+	background-color: var(--nlb-panel);
+	box-shadow: 0 0 0 2px var(--nlb-line);
+	transition: box-shadow 150ms ease;
+}
+
+.fi-input-wrp:focus-within {
+	box-shadow: 0 0 0 2.5px var(--nlb-lavender-deep), 4px 4px 0 1px var(--nlb-pop);
+}
+
+.fi-input-wrp.fi-invalid,
+.fi-input-wrp.fi-invalid:focus-within {
+	box-shadow: 0 0 0 2.5px var(--danger-600);
+}
+
+/* ------------------------------------------------------------------ */
+/* Tables                                                               */
+/* ------------------------------------------------------------------ */
+.fi-ta-table > thead > tr {
+	background-color: var(--nlb-lavender);
+}
+
+.fi-ta-table > thead {
+	border-bottom: 3px solid var(--nlb-line);
+}
+
+.fi-ta-header-cell,
+.fi-ta-header-cell-sort-btn {
+	color: var(--nlb-ink);
+	font-family: var(--nlb-comic);
+	font-size: 1.05rem;
+	font-weight: 400;
+	letter-spacing: 0.05em;
+}
+
+.fi-ta-row {
+	transition: background-color 120ms ease;
+}
+
+.fi-ta-row:hover,
+.dark .fi-ta-row:hover {
+	background-color: var(--nlb-lemon);
+}
+
+/* ------------------------------------------------------------------ */
+/* Badges, avatars, dropdown items                                      */
+/* ------------------------------------------------------------------ */
+.fi-badge {
+	border-radius: 0.5rem;
+	font-weight: 700;
+	transform: rotate(-1.5deg);
+}
+
+.fi-avatar.fi-user-avatar {
+	box-shadow: 0 0 0 2.5px var(--nlb-line), var(--nlb-shadow-sm);
+}
+
+.fi-dropdown-list-item:hover,
+.fi-dropdown-list-item:focus-visible {
+	background-color: var(--nlb-lavender);
+}
+
 /*
-  Scrollbars: a thin lavender pill instead of the OS default, without arrow buttons.
-  Chrome ignores the ::-webkit-scrollbar rules (and shows arrows) once `scrollbar-color`
-  is set, so the standard properties are only used where those rules don't exist (Firefox).
+  Select dropdowns: rounded, lavender-highlighted options.
+  Filament marks the keyboard/hover-highlighted option with .fi-selected and the chosen one
+  with aria-selected="true".
 */
-:root {
-	--nlb-scrollbar: rgb(110 88 168 / 0.22);
-	--nlb-scrollbar-hover: rgb(110 88 168 / 0.5);
+.fi-select-input .fi-dropdown-panel {
+	padding: 0.375rem;
 }
 
-.dark {
-	--nlb-scrollbar: rgb(255 255 255 / 0.12);
-	--nlb-scrollbar-hover: rgb(255 255 255 / 0.3);
+.fi-select-input-option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	border-radius: 0.625rem;
+	padding: 0.5rem 0.75rem;
+	transition: background-color 120ms ease, color 120ms ease;
 }
 
+.fi-select-input-option:hover,
+.fi-select-input-option.fi-selected {
+	background-color: var(--nlb-lavender);
+	color: var(--nlb-ink);
+}
+
+.fi-select-input-option[aria-selected='true'] {
+	font-weight: 700;
+	color: var(--nlb-lavender-deep);
+}
+
+/* Check mark next to the chosen option */
+.fi-select-input-option[aria-selected='true']::after {
+	content: '';
+	flex-shrink: 0;
+	width: 1rem;
+	height: 1rem;
+	background-color: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / contain no-repeat;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ------------------------------------------------------------------ */
+/* Login and the other simple pages: a splash panel with action rays    */
+/* ------------------------------------------------------------------ */
+.fi-simple-layout {
+	background-color: var(--nlb-lavender);
+	background-image:
+		radial-gradient(var(--nlb-dots) 1.5px, transparent 1.6px),
+		repeating-conic-gradient(from 0deg at 50% 45%, var(--nlb-rose) 0deg 7deg, transparent 7deg 14deg);
+	background-size: 16px 16px, auto;
+}
+
+.fi-simple-main {
+	border-radius: 1.75rem;
+	box-shadow: var(--nlb-shadow-lg);
+}
+
+/* ------------------------------------------------------------------ */
+/* Scrollbars: a thin pill instead of the OS default, without arrows.   */
+/* Chrome ignores the ::-webkit-scrollbar rules (and shows arrows) once */
+/* `scrollbar-color` is set, so the standard properties are only used   */
+/* where those rules don't exist (Firefox).                             */
+/* ------------------------------------------------------------------ */
 ::-webkit-scrollbar {
 	width: 6px;
 	height: 6px;
@@ -261,119 +614,75 @@
 	}
 }
 
-/* Sidebar menu: items fade out at the top and bottom edges while scrolling */
-.fi-sidebar-nav {
-	mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
-	-webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 2.5rem), transparent);
+/* ------------------------------------------------------------------ */
+/* Entrance animations: the header drops in, the menu slides in from    */
+/* the left, cards slide up one after another and stats pop.            */
+/* `backwards` (not `both`) so nothing keeps a transform afterwards,    */
+/* which would trap open dropdowns under the next card.                 */
+/* ------------------------------------------------------------------ */
+@keyframes nlb-slide-down {
+	from { opacity: 0; transform: translateY(-24px); }
 }
 
-.fi-sidebar-group-label {
-	font-size: 0.7rem;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
+@keyframes nlb-slide-up {
+	from { opacity: 0; transform: translateY(32px); }
 }
 
-/* Buttons: pills; primary ones get a gradient and a soft glow */
-.fi-btn:not(.fi-btn-group .fi-btn) {
-	border-radius: 999px;
-	padding-inline: calc(var(--spacing) * 4);
+@keyframes nlb-slide-in-left {
+	from { opacity: 0; transform: translateX(-32px); }
 }
 
-.fi-btn.fi-color-primary:not(.fi-outlined) {
-	background-image: linear-gradient(135deg, var(--primary-500), var(--primary-700));
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 8px 20px -8px rgb(110 88 168 / 0.6);
-	transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+@keyframes nlb-slide-in-right {
+	from { opacity: 0; transform: translateX(40px); }
 }
 
-.fi-btn.fi-color-primary:not(.fi-outlined):hover {
-	filter: brightness(1.06);
-	transform: translateY(-1px);
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 12px 24px -8px rgb(110 88 168 / 0.7);
+@keyframes nlb-pop {
+	from { opacity: 0; transform: scale(0.8) rotate(-4deg); }
 }
 
-/* Display type: Fraunces for headings and big numbers */
-.fi-header-heading,
-.fi-simple-header-heading,
-.fi-section-header-heading,
-.fi-wi-stats-overview-stat-value {
-	font-family: Fraunces, Georgia, serif;
-	font-weight: 500;
-	letter-spacing: -0.02em;
+.fi-header {
+	animation: nlb-slide-down 500ms var(--nlb-ease) backwards;
 }
 
-.fi-header-heading {
-	font-size: clamp(2rem, 1.5rem + 1.5vw, 2.75rem);
+.fi-sidebar-nav-groups > * {
+	animation: nlb-slide-in-left 450ms var(--nlb-ease) backwards;
 }
 
-.fi-wi-stats-overview-stat-value {
-	font-size: 2.5rem;
-	line-height: 1.1;
+.fi-sidebar-nav-groups > :nth-child(2) { animation-delay: 60ms; }
+.fi-sidebar-nav-groups > :nth-child(3) { animation-delay: 120ms; }
+.fi-sidebar-nav-groups > :nth-child(4) { animation-delay: 180ms; }
+.fi-sidebar-nav-groups > :nth-child(5) { animation-delay: 240ms; }
+.fi-sidebar-nav-groups > :nth-child(n + 6) { animation-delay: 300ms; }
+
+.fi-page-content > * {
+	animation: nlb-slide-up 600ms var(--nlb-ease) backwards;
 }
 
-.fi-wi-stats-overview-stat-label {
-	font-size: 0.75rem;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
+.fi-page-content > :nth-child(2) { animation-delay: 100ms; }
+.fi-page-content > :nth-child(3) { animation-delay: 200ms; }
+.fi-page-content > :nth-child(n + 4) { animation-delay: 300ms; }
+
+.fi-wi-stats-overview-stat {
+	animation: nlb-pop 500ms var(--nlb-ease) backwards;
 }
 
-/* Inputs: softer, with a lavender focus glow */
-.fi-input-wrp:focus-within {
-	box-shadow: 0 0 0 4px rgb(110 88 168 / 0.15), 0 0 0 1.5px var(--primary-600);
+.fi-wi-stats-overview .fi-grid-col:nth-child(2) .fi-wi-stats-overview-stat { animation-delay: 150ms; }
+.fi-wi-stats-overview .fi-grid-col:nth-child(3) .fi-wi-stats-overview-stat { animation-delay: 300ms; }
+.fi-wi-stats-overview .fi-grid-col:nth-child(n + 4) .fi-wi-stats-overview-stat { animation-delay: 450ms; }
+
+.fi-simple-main {
+	animation: nlb-pop 600ms var(--nlb-ease) backwards;
 }
 
-/*
-  Select dropdowns: a frosted panel with rounded, lavender-highlighted options.
-  Filament marks the keyboard/hover-highlighted option with .fi-selected and the chosen one
-  with aria-selected="true".
-*/
-.fi-select-input .fi-dropdown-panel {
-	padding: 0.375rem;
-	border-radius: 1rem;
-	box-shadow: 0 0 0 1px rgb(47 42 59 / 0.06), 0 20px 48px -16px rgb(110 88 168 / 0.35);
+.fi-no-notification {
+	animation: nlb-slide-in-right 400ms var(--nlb-ease) backwards;
 }
 
-.dark .fi-select-input .fi-dropdown-panel {
-	box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 20px 48px -16px rgb(0 0 0 / 0.7);
-}
-
-.fi-select-input-option {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.5rem;
-	border-radius: 0.625rem;
-	padding: 0.5rem 0.75rem;
-	transition: background-color 120ms ease, color 120ms ease;
-}
-
-.fi-select-input-option:hover,
-.fi-select-input-option.fi-selected {
-	background-color: var(--nlb-lavender);
-	color: var(--primary-700);
-}
-
-.dark .fi-select-input-option:hover,
-.dark .fi-select-input-option.fi-selected {
-	background-color: rgb(110 88 168 / 0.3);
-	color: var(--primary-200);
-}
-
-.fi-select-input-option[aria-selected='true'] {
-	font-weight: 600;
-	color: var(--primary-700);
-}
-
-.dark .fi-select-input-option[aria-selected='true'] {
-	color: var(--primary-300);
-}
-
-/* Check mark next to the chosen option */
-.fi-select-input-option[aria-selected='true']::after {
-	content: '';
-	flex-shrink: 0;
-	width: 1rem;
-	height: 1rem;
-	background-color: currentColor;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / contain no-repeat;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='m4.5 10.5 3.5 3.5 7.5-8'/%3E%3C/svg%3E") center / contain no-repeat;
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		animation: none !important;
+		transition-duration: 0s !important;
+	}
 }

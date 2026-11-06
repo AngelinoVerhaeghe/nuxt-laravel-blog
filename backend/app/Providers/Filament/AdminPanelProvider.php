@@ -49,7 +49,9 @@ class AdminPanelProvider extends PanelProvider
 					->middleware('signed')
 					->name('auth.invitation.accept');
 			})
-			// Pastel palette, matching the frontend (frontend/app/assets/css/main.css)
+			// Comic-book look on the pastel palette, matching the frontend (frontend/app/assets/css/main.css)
+			->brandLogo(fn () => view('filament.brand'))
+			->brandLogoHeight('2.5rem')
 			->colors([
 				// lavender-deep as shade 600, and 500 (button hover) deep enough for white text too
 				'primary' => array_replace(Color::hex('#6e58a8'), [
@@ -63,6 +65,10 @@ class AdminPanelProvider extends PanelProvider
 				'info' => Color::Sky,
 				'gray' => array_replace(Color::Stone, [
 					50 => Color::convertToOklch('#fbf7f2'), // cream, the page background
+					// Dark ("villain") mode surfaces in night purple, like the frontend
+					700 => Color::convertToOklch('#3a3150'),
+					800 => Color::convertToOklch('#2b2340'),
+					900 => Color::convertToOklch('#211b2d'),
 					950 => Color::convertToOklch('#2f2a3b'), // ink, the text and avatar color
 				]),
 			])
