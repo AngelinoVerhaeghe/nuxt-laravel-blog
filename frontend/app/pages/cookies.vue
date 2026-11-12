@@ -106,6 +106,10 @@ const optional = cookieCategories.filter(category => !category.required)
                 <p>
                     You can also delete cookies and local storage yourself in your browser settings. If you do, we'll simply ask again.
                 </p>
+                <p>
+                    For everything else about your personal data, who we are and how to reach us, read the
+                    <NuxtLink to="/privacy">privacy policy</NuxtLink>.
+                </p>
             </div>
         </article>
     </div>

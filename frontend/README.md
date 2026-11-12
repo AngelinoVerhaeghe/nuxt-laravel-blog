@@ -55,6 +55,7 @@ CI (`.github/workflows/ci.yml`) runs `npm run typecheck` and `npx nuxt build` on
 | `/blog` | All posts, newest first |
 | `/blog/<slug>` | One post |
 | `/cookies` | Cookie policy: what the site stores, and a button to change cookie choices |
+| `/privacy` | Privacy policy: what personal data the site handles, why, for how long, and visitors' rights |
 | Any other path | The error page (`app/error.vue`), for example a 404 |
 
 ## Posts
@@ -119,6 +120,12 @@ The site uses no statistics or marketing tools yet. To add one:
 3. Add what it stores to the tables in `app/pages/cookies.vue`, and change the "last updated" date there.
 4. Raise `CONSENT_VERSION`, so every visitor is asked again.
 
+## Privacy policy
+
+`/privacy` describes every way the site handles personal data, as the GDPR (article 13) requires. The facts the code can't know live in `app/utils/legal.ts`: who runs the site and how to reach them, the hosting and email providers, how long server logs are kept, and the data protection authority. Values in `[square brackets]` are placeholders; while any are left, the page shows a "draft" notice.
+
+When the site starts handling personal data in a new way (a contact form, a tracker, a new provider), add it to the `purposes` or `recipients` list in `app/pages/privacy.vue` and change the "last updated" date there.
+
 ## Project structure
 
 ```
@@ -126,10 +133,11 @@ app/
   app.vue               Layout: navigation, page, footer
   error.vue             Error page (404 and others)
   assets/css/main.css   Tailwind setup, theme tokens for both modes, comic utilities, animations
-  components/           Navigation, footer, logo, theme switch, post card, comic bursts and headings
+  components/           Navigation, footer, logo, theme switch, cookie banner, post card, comic bursts and headings
   components/content/   Components for use inside markdown posts
-  composables/          useBlogPosts
-  pages/                index, blog/index, blog/[slug]
+  composables/          useBlogPosts, useCookieConsent
+  pages/                index, blog/index, blog/[slug], cookies, privacy
+  utils/legal.ts        Controller, providers and authority for the privacy policy
   plugins/reveal.ts     The v-reveal scroll animation
 docs/screenshots/       Screenshots for this README
 content/blog/           Markdown posts
