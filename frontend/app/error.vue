@@ -10,6 +10,7 @@ useHead({ title: () => notFound.value ? 'Page not found' : 'Something went wrong
 
 <template>
     <div class="flex min-h-screen flex-col overflow-x-clip font-quicksand text-ink antialiased">
+        <CookieBanner/>
         <TheNavigation/>
 
         <main class="w-full flex-1 px-4 pt-12 sm:px-6 lg:px-10 lg:pt-20">
