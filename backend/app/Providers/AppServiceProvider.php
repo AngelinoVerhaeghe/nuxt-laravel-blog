@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Policies\AdminOnlyPolicy;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -40,8 +41,10 @@ class AppServiceProvider extends ServiceProvider
             Gate::policy($model, AdminOnlyPolicy::class);
         }
 
+        // Reset links from POST /forgot-password open the admin panel's reset page, as
+        // the frontend has no accounts (the panel's own "Forgot password?" does the same)
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+            return Filament::getPanel('dashboard')->getResetPasswordUrl($token, $notifiable);
         });
 
         RateLimiter::for('api', function (Request $request) {

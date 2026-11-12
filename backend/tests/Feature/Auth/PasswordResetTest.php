@@ -23,6 +23,19 @@ class PasswordResetTest extends TestCase
         Notification::assertSentTo($user, ResetPassword::class);
     }
 
+    public function test_the_reset_link_opens_the_admin_reset_page(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+
+        $this->post('/forgot-password', ['email' => $user->email]);
+
+        Notification::assertSentTo($user, ResetPassword::class, function (ResetPassword $notification) use ($user) {
+            return str_starts_with($notification->toMail($user)->actionUrl, url('/dashboard/password-reset/reset'));
+        });
+    }
+
     public function test_password_can_be_reset_with_valid_token(): void
     {
         Notification::fake();

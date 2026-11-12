@@ -22,6 +22,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -56,7 +57,15 @@ class PostResource extends Resource
 									->required(),
 								TextInput::make('slug')
 									->required(),
-								MarkdownEditor::make('description')
+								Textarea::make('description')
+									->label('Summary')
+									->helperText('A sentence or two, shown on the post cards and in link previews.')
+									->rows(3)
+									->maxLength(300)
+									->required(),
+								MarkdownEditor::make('content')
+									->helperText('The full post, in Markdown: ## for headings, **bold**, lists, links and code blocks.')
+									->required(),
 							])
 					]),
 				Group::make()
