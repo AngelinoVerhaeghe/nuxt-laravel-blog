@@ -13,6 +13,8 @@ const pages = [
 ]
 
 const year = new Date().getFullYear()
+
+const { openSettings } = useCookieConsent()
 </script>
 
 <template>
@@ -63,7 +65,11 @@ const year = new Date().getFullYear()
             </div>
 
             <div class="mt-10 flex flex-col items-center justify-between gap-2 border-t-3 border-dashed border-line/40 pt-6 text-sm text-ink-soft sm:flex-row">
-                <span>© {{ year }} Codewave. All rights reserved.</span>
+                <span class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+                    <span>© {{ year }} Codewave. All rights reserved.</span>
+                    <NuxtLink to="/cookies" class="font-semibold underline decoration-2 underline-offset-2 transition hover:text-ink">Cookie policy</NuxtLink>
+                    <button type="button" class="font-semibold underline decoration-2 underline-offset-2 transition hover:text-ink" @click="openSettings">Cookie settings</button>
+                </span>
                 <span class="font-comic text-lg tracking-wider">
                     <span class="dark:hidden">Drawn in hero mode</span>
                     <span class="hidden dark:inline">Plotted in villain mode</span>

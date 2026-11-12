@@ -54,6 +54,7 @@ CI (`.github/workflows/ci.yml`) runs `npm run typecheck` and `npx nuxt build` on
 | `/` | Hero, a featured article and the three latest posts |
 | `/blog` | All posts, newest first |
 | `/blog/<slug>` | One post |
+| `/cookies` | Cookie policy: what the site stores, and a button to change cookie choices |
 | Any other path | The error page (`app/error.vue`), for example a 404 |
 
 ## Posts
@@ -100,6 +101,23 @@ Headings use Bangers (`font-comic`) and body text uses Quicksand (`font-quicksan
 - `v-reveal` (`app/plugins/reveal.ts`) slides an element in once it scrolls into view: `v-reveal` (from below), `v-reveal="'left'"` (also `'right'`, `'down'`, `'pop'`), or `v-reveal="{ from: 'right', delay: 150 }"`.
 - Pages slide in and out on navigation (`app.pageTransition` in `nuxt.config.ts`).
 - Visitors with "reduce motion" turned on get no animations, and without JavaScript everything is shown straight away.
+
+## Cookie consent
+
+On a first visit, `CookieBanner` asks for cookie consent. It follows the GDPR and ePrivacy rules: "Reject all" is as visible as "Accept all", no option is pre-ticked, the site works without an answer, and **Cookie settings** in the footer (or on `/cookies`) changes the choice at any time. The choice is saved in the `codewave-consent` cookie for 6 months.
+
+The site uses no statistics or marketing tools yet. To add one:
+
+1. List it as a service under its category in `app/composables/useCookieConsent.ts`, with the cookies it sets. Withdrawing consent deletes those cookies and reloads the page.
+2. Load it only when the visitor has said yes:
+
+   ```ts
+   const { allowed } = useCookieConsent()
+   watchEffect(() => { if (allowed('analytics')) loadAnalytics() })
+   ```
+
+3. Add what it stores to the tables in `app/pages/cookies.vue`, and change the "last updated" date there.
+4. Raise `CONSENT_VERSION`, so every visitor is asked again.
 
 ## Project structure
 
