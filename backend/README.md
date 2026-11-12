@@ -47,7 +47,7 @@ php artisan app:make-admin you@example.com --name="Your Name"
 
 ## Users and invitations
 
-There is no public registration. Admins add users under **Users → New user** (name, email, role); the user gets an email with a one-time link (valid for 48 hours) to choose a password and is logged in right after. Pending invitations can be resent from the users list.
+There is no public registration. Admins add users under **Users → New user** (name, email, role); the user gets an email with a one-time link (valid for 48 hours) to choose a password and is logged in right after. Pending invitations can be resent from the users list. **Forgot password?** on the login page emails a reset link, valid for 60 minutes.
 
 | Role | Access |
 |---|---|

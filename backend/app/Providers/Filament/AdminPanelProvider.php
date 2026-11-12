@@ -42,6 +42,8 @@ class AdminPanelProvider extends PanelProvider
 			->id('dashboard')
 			->path('dashboard')
 			->login()
+			// "Forgot password?" on the login page; the link in the email is valid for 60 minutes (config/auth.php)
+			->passwordReset()
 			->profile()
 			->routes(function (): void {
 				// Link from the invitation email (see User::sendInvitation())

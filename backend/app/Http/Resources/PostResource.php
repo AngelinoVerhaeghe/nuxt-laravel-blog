@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -25,6 +26,8 @@ class PostResource extends JsonResource implements HasMedia
 			'title' => $this->title,
 			'slug' => $this->slug,
 			'description' => strip_tags($this->description),
+			// The full text only on a single post (GET /posts/{slug}), not in the list
+			'content' => $this->when($request->route('post') !== null, fn () => $this->contentHtml()),
 			'imageUrl' => $mediaUrl,
 			'isPublished' => $this->is_published,
 			'createAt' => $this->created_at->toFormattedDateString(),
@@ -35,5 +38,18 @@ class PostResource extends JsonResource implements HasMedia
 				'name' => $this->category->name,
 			],
 		];
+	}
+
+	/**
+	 * The Markdown content as HTML. Older posts hold HTML from a rich text editor, so
+	 * HTML is allowed through, then sanitized (no scripts, event handlers or javascript: links).
+	 */
+	private function contentHtml(): string
+	{
+		if (blank($this->content)) {
+			return '';
+		}
+
+		return Str::sanitizeHtml(Str::markdown($this->content, ['html_input' => 'allow']));
 	}
 }

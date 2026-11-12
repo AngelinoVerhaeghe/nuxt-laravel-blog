@@ -76,7 +76,7 @@ The defaults work for the local setup above. The settings you are most likely to
 |---|---|---|---|
 | `APP_NAME` | `backend/.env` | `Codewave` | Name in the emails (subject, sender, header) |
 | `APP_URL` | `backend/.env` | `http://localhost:8000` | Base of the image URLs in the API |
-| `FRONTEND_URL` | `backend/.env` | `http://localhost:3000` | Origin allowed by CORS, and the base of password reset links |
+| `FRONTEND_URL` | `backend/.env` | `http://localhost:3000` | Origin allowed by CORS |
 | `DB_*` | `backend/.env` | MySQL on `127.0.0.1:3306`, database `backend`, user `root` | Database connection |
 | `MAIL_*` | `backend/.env` | Mailpit on `127.0.0.1:1025`, from `hello@example.com` | Outgoing email; set a real provider and sender in production |
 | `NUXT_PUBLIC_API_BASE` | environment or `frontend/.env` | `http://localhost:8000/api/v1` | Where the frontend loads posts from |
@@ -85,7 +85,7 @@ The defaults work for the local setup above. The settings you are most likely to
 
 ### Users and roles
 
-There is no public registration. An admin adds a user under **Users → New user** with a name, email and role. The user gets an email with a one-time link (valid for 48 hours) to choose a password, and is logged in right after. Pending invitations can be resent from the users list. Users can change their own name, email and password under **Edit profile** in the user menu.
+There is no public registration. An admin adds a user under **Users → New user** with a name, email and role. The user gets an email with a one-time link (valid for 48 hours) to choose a password, and is logged in right after. Pending invitations can be resent from the users list. Users can change their own name, email and password under **Edit profile** in the user menu. A forgotten password can be reset with **Forgot password?** on the login page, which emails a link valid for 60 minutes.
 
 | Role | Can manage |
 |---|---|
@@ -96,7 +96,7 @@ Users without one of these roles can't open the admin panel.
 
 ### Posts
 
-Posts are written in the admin panel (title, slug, description in markdown, author, category, thumbnail). A post only appears on the site once its **Active** toggle is on (shown as **Published** in the posts list): drafts are left out of `/api/v1/posts`, and a draft's URL returns 404.
+Posts are written in the admin panel: title, slug, a short **summary** (shown on the post cards), the **content** in Markdown, author, category and thumbnail. The API renders the content to HTML on `GET /api/v1/posts/{slug}`; HTML in older posts is kept, but sanitized (no scripts or `javascript:` links). A post only appears on the site once its **Active** toggle is on (shown as **Published** in the posts list): drafts are left out of `/api/v1/posts`, and a draft's URL returns 404.
 
 ### Markdown posts
 
@@ -113,7 +113,7 @@ Public, read-only, and limited to 60 requests per minute per user or IP address.
 | Endpoint | Returns |
 |---|---|
 | `GET /api/v1/posts` | Published posts |
-| `GET /api/v1/posts/{slug}` | One published post, or 404 |
+| `GET /api/v1/posts/{slug}` | One published post with its `content` as HTML, or 404 |
 | `GET /api/v1/products` | Visible, available products |
 | `GET /api/v1/products/{slug}` | One visible, available product, or 404 |
 

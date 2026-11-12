@@ -39,7 +39,9 @@ useHead({ title: () => meta.value?.title });
                 <template v-else>
                     <h1>{{ post.title }}</h1>
                     <nuxt-img v-if="post.imageUrl" class="h-56 w-full object-cover sm:h-72" :src="post.imageUrl" :alt="post.title"/>
-                    <p>{{ post.description }}</p>
+                    <!-- The API renders the Markdown to sanitized HTML (PostResource::contentHtml) -->
+                    <div v-if="post.content" v-html="post.content"/>
+                    <p v-else>{{ post.description }}</p>
                 </template>
             </div>
         </article>

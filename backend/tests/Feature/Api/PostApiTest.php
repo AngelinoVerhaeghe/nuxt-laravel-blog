@@ -21,7 +21,8 @@ class PostApiTest extends TestCase
             'category_id' => $category->id,
             'title' => 'Hello World',
             'slug' => 'hello-world',
-            'description' => '<p>First post</p>',
+            'description' => 'First post',
+            'content' => "## Chapter one\n\nSome **bold** words.",
             'is_published' => true,
         ], ...$attributes]);
     }
@@ -47,6 +48,53 @@ class PostApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.title', 'Hello World')
             ->assertJsonPath('data.isPublished', true);
+    }
+
+    public function test_a_post_shows_its_content_as_html(): void
+    {
+        $this->createPost();
+
+        $this->getJson('/api/v1/posts/hello-world')
+            ->assertOk()
+            ->assertJsonPath('data.description', 'First post')
+            ->assertJsonPath('data.content', "<h2>Chapter one</h2>\n<p>Some <strong>bold</strong> words.</p>\n");
+    }
+
+    public function test_the_list_leaves_out_the_content(): void
+    {
+        $this->createPost();
+
+        $this->getJson('/api/v1/posts')
+            ->assertOk()
+            ->assertJsonMissingPath('data.0.content');
+    }
+
+    public function test_html_in_the_content_is_kept_but_sanitized(): void
+    {
+        // Older posts were written in a rich text editor and hold HTML
+        $this->createPost(['content' => '<p>Old <em>post</em></p><script>alert(1)</script><a href="javascript:alert(1)">link</a>']);
+
+        $content = $this->getJson('/api/v1/posts/hello-world')->json('data.content');
+
+        $this->assertStringContainsString('<p>Old <em>post</em></p>', $content);
+        $this->assertStringNotContainsString('<script', $content);
+        $this->assertStringNotContainsString('javascript:', $content);
+    }
+
+    public function test_a_post_without_content_has_empty_content(): void
+    {
+        $this->createPost(['content' => null]);
+
+        $this->getJson('/api/v1/posts/hello-world')
+            ->assertOk()
+            ->assertJsonPath('data.content', '');
+    }
+
+    public function test_html_is_stripped_from_the_description(): void
+    {
+        $this->createPost(['description' => '<p>First <b>post</b></p>']);
+
+        $this->getJson('/api/v1/posts')->assertJsonPath('data.0.description', 'First post');
     }
 
     public function test_unpublished_posts_are_not_listed(): void
